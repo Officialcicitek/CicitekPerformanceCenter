@@ -1,0 +1,12 @@
+C:\CicitekPerformanceCenter\src\main.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\main.obj
+C:\CicitekPerformanceCenter\src\GUI\MainWindow.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\MainWindow.obj
+C:\CicitekPerformanceCenter\src\GUI\Dashboard\Dashboard.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\Dashboard.obj
+C:\CicitekPerformanceCenter\src\GUI\Dashboard\LiveGraph.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\LiveGraph.obj
+C:\CicitekPerformanceCenter\src\CPU\CPU.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\CPU.obj
+C:\CicitekPerformanceCenter\src\RAM\RAM.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\RAM.obj
+C:\CicitekPerformanceCenter\src\System\System.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\System.obj
+C:\CicitekPerformanceCenter\src\GPU\GPU.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\GPU.obj
+C:\CicitekPerformanceCenter\src\Disk\Disk.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\Disk.obj
+C:\CicitekPerformanceCenter\src\Network\Network.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\Network.obj
+C:\CicitekPerformanceCenter\src\Monitoring\Monitoring.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\Monitoring.obj
+C:\CicitekPerformanceCenter\src\Temperature\Temperature.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\Temperature.obj
