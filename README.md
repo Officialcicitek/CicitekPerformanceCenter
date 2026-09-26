@@ -115,7 +115,11 @@ Planned improvements include:
 
 ## License
 
-License information will be added before the first public release.
+CicitekPerformanceCenter is licensed under the **Apache License 2.0**.
+
+Copyright © 2026 cicitek.
+
+See the [LICENSE](LICENSE) file for the full license text.
 
 ---
 
