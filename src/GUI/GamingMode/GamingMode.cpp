@@ -1,584 +1,829 @@
 #include "GamingMode.h"
 
 #include <QFrame>
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QStyle>
+#include <QList>
 #include <QPushButton>
+#include <QSizePolicy>
+#include <QStyle>
+#include <QTimer>
 #include <QVBoxLayout>
 
+#include <windows.h>
+#include <tlhelp32.h>
 
 GamingMode::GamingMode(QWidget* parent)
     : QWidget(parent)
 {
-    setObjectName("gamingMode");
+    setObjectName("gamingModePage");
 
     QVBoxLayout* mainLayout =
         new QVBoxLayout(this);
 
     mainLayout->setContentsMargins(
+        30,
+        25,
+        30,
+        30
+    );
+
+    mainLayout->setSpacing(20);
+
+    // =========================================================
+    // HEADER
+    // =========================================================
+
+    QLabel* titleLabel =
+        new QLabel("Gaming Mode");
+
+    titleLabel->setObjectName("pageTitle");
+
+    QLabel* subtitleLabel =
+        new QLabel(
+            "Optimize your PC for gaming performance."
+        );
+
+    subtitleLabel->setObjectName("pageSubtitle");
+
+    mainLayout->addWidget(titleLabel);
+    mainLayout->addWidget(subtitleLabel);
+
+    // =========================================================
+    // GAMING MODE CARD
+    // =========================================================
+
+    QFrame* modeCard =
+        createCard(
+            "gamingModeCard",
+            "GAMING MODE",
+            "Enable performance-focused settings for gaming."
+        );
+
+    QVBoxLayout* modeLayout =
+        qobject_cast<QVBoxLayout*>(
+            modeCard->layout()
+        );
+
+    QHBoxLayout* modeStatusLayout =
+        new QHBoxLayout();
+
+    modeStatusLayout->setContentsMargins(
+        0,
+        8,
+        0,
+        0
+    );
+
+    modeStatusLabel =
+        new QLabel(
+            "Gaming Mode is OFF"
+        );
+
+    modeStatusLabel->setObjectName(
+        "modeStatusLabel"
+    );
+
+    autoGamingModeButton =
+        new QPushButton(
+            "AUTO ON"
+        );
+
+    autoGamingModeButton->setObjectName(
+        "autoToggleButton"
+    );
+
+    autoGamingModeButton->setCursor(
+        Qt::PointingHandCursor
+    );
+
+    autoGamingModeButton->setSizePolicy(
+        QSizePolicy::Fixed,
+        QSizePolicy::Fixed
+    );
+
+    autoGamingModeButton->setProperty(
+        "active",
+        true
+    );
+
+    modeStatusLayout->addWidget(
+        modeStatusLabel
+    );
+
+    modeStatusLayout->addStretch();
+
+    modeStatusLayout->addWidget(
+        autoGamingModeButton
+    );
+
+    modeLayout->addLayout(
+        modeStatusLayout
+    );
+
+    modeToggleButton =
+        new QPushButton(
+            "ENABLE"
+        );
+
+    modeToggleButton->setObjectName(
+        "gamingToggleButton"
+    );
+
+    modeToggleButton->setCursor(
+        Qt::PointingHandCursor
+    );
+
+    modeToggleButton->setProperty(
+        "active",
+        false
+    );
+
+    modeLayout->addSpacing(10);
+
+    modeLayout->addWidget(
+        modeToggleButton
+    );
+
+    mainLayout->addWidget(
+        modeCard
+    );
+
+    // =========================================================
+    // LOWER GRID
+    // =========================================================
+
+    QGridLayout* cardsGrid =
+        new QGridLayout();
+
+    cardsGrid->setContentsMargins(
         0,
         0,
         0,
         0
     );
 
-    mainLayout->setSpacing(16);
-
+    cardsGrid->setHorizontalSpacing(15);
+    cardsGrid->setVerticalSpacing(15);
 
     // =========================================================
-    // PAGE HEADER
+    // HIGH CPU PRIORITY
     // =========================================================
 
-    QFrame* pageHeader =
-        new QFrame();
-
-    pageHeader->setObjectName(
-        "gamingHeader"
-    );
-
-    QVBoxLayout* headerLayout =
-        new QVBoxLayout(pageHeader);
-
-    headerLayout->setContentsMargins(
-        20,
-        16,
-        20,
-        16
-    );
-
-    headerLayout->setSpacing(3);
-
-
-    QLabel* title =
-        new QLabel("Gaming Mode");
-
-    title->setObjectName(
-        "gamingPageTitle"
-    );
-
-
-    QLabel* subtitle =
-        new QLabel(
-            "Optimize your system for gaming"
+    QFrame* cpuCard =
+        createCard(
+            "statusCard",
+            "HIGH CPU PRIORITY",
+            "Give detected games higher process priority."
         );
 
-    subtitle->setObjectName(
-        "gamingPageSubtitle"
-    );
-
-
-    headerLayout->addWidget(title);
-    headerLayout->addWidget(subtitle);
-
-    mainLayout->addWidget(
-        pageHeader
-    );
-
-
-    // =========================================================
-    // MAIN MODE CARD
-    // =========================================================
-
-    QFrame* modeCard =
-        new QFrame();
-
-    modeCard->setObjectName(
-        "gamingModeCard"
-    );
-
-    QHBoxLayout* modeLayout =
-        new QHBoxLayout(modeCard);
-
-    modeLayout->setContentsMargins(
-        22,
-        20,
-        22,
-        20
-    );
-
-    modeLayout->setSpacing(18);
-
-
-    // ---------------------------------------------------------
-    // LEFT
-    // ---------------------------------------------------------
-
-    QVBoxLayout* modeTextLayout =
-        new QVBoxLayout();
-
-    modeTextLayout->setSpacing(4);
-
-
-    QLabel* modeTitle =
-        new QLabel("Gaming Mode");
-
-    modeTitle->setObjectName(
-        "gamingCardTitle"
-    );
-
-
-    modeStatusLabel =
-        new QLabel("Inactive");
-
-    modeStatusLabel->setObjectName(
-        "gamingStatus"
-    );
-
-
-    QLabel* modeDescription =
-        new QLabel(
-            "Prioritize gaming performance and reduce background activity."
+    QVBoxLayout* cpuCardLayout =
+        qobject_cast<QVBoxLayout*>(
+            cpuCard->layout()
         );
 
-    modeDescription->setObjectName(
-        "gamingCardDescription"
+    cpuPriorityStatusLabel =
+        new QLabel(
+            "Boost game process priority"
+        );
+
+    cpuPriorityStatusLabel->setObjectName(
+        "cpuPriorityStatusLabel"
     );
 
-    modeDescription->setWordWrap(true);
-
-
-    modeTextLayout->addWidget(
-        modeTitle
+    cpuPriorityStatusLabel->setWordWrap(
+        true
     );
 
-    modeTextLayout->addWidget(
-        modeStatusLabel
+    cpuPriorityButton =
+        new QPushButton(
+            "OFF"
+        );
+
+    cpuPriorityButton->setObjectName(
+        "settingToggleButton"
     );
 
-    modeTextLayout->addSpacing(4);
-
-    modeTextLayout->addWidget(
-        modeDescription
+    cpuPriorityButton->setCursor(
+        Qt::PointingHandCursor
     );
 
-
-    modeLayout->addLayout(
-        modeTextLayout
+    cpuPriorityButton->setSizePolicy(
+        QSizePolicy::Fixed,
+        QSizePolicy::Fixed
     );
 
-    modeLayout->addStretch();
-
-
-    // ---------------------------------------------------------
-    // TOGGLE
-    // ---------------------------------------------------------
-
-    modeToggleButton =
-        new QPushButton("ENABLE");
-
-    modeToggleButton->setObjectName(
-        "gamingToggle"
+    cpuPriorityButton->setProperty(
+        "active",
+        false
     );
 
-    modeToggleButton->setCheckable(true);
+    cpuCardLayout->addStretch();
 
-    modeToggleButton->setFixedSize(
-        120,
-        42
+    cpuCardLayout->addWidget(
+        cpuPriorityStatusLabel
     );
 
-
-    modeLayout->addWidget(
-        modeToggleButton
-    );
-
-
-    connect(
-        modeToggleButton,
-        &QPushButton::toggled,
-        this,
-        [this](bool enabled)
-        {
-            if (enabled)
-            {
-                modeToggleButton->setText(
-                    "ACTIVE"
-                );
-
-                modeStatusLabel->setText(
-                    "Gaming Mode Active"
-                );
-
-                modeStatusLabel->setProperty(
-                    "active",
-                    true
-                );
-            }
-            else
-            {
-                modeToggleButton->setText(
-                    "ENABLE"
-                );
-
-                modeStatusLabel->setText(
-                    "Inactive"
-                );
-
-                modeStatusLabel->setProperty(
-                    "active",
-                    false
-                );
-            }
-
-            modeStatusLabel->style()->unpolish(
-                modeStatusLabel
-            );
-
-            modeStatusLabel->style()->polish(
-                modeStatusLabel
-            );
-
-            modeStatusLabel->update();
-        }
-    );
-
-
-    mainLayout->addWidget(
-        modeCard
-    );
-
-
-    // =========================================================
-    // STATUS CARDS
-    // =========================================================
-
-    QHBoxLayout* statusLayout =
+    QHBoxLayout* cpuButtonLayout =
         new QHBoxLayout();
 
-    statusLayout->setSpacing(16);
+    cpuButtonLayout->setContentsMargins(
+        0,
+        8,
+        0,
+        0
+    );
 
+    cpuButtonLayout->addStretch();
 
-    // ---------------------------------------------------------
+    cpuButtonLayout->addWidget(
+        cpuPriorityButton
+    );
+
+    cpuCardLayout->addLayout(
+        cpuButtonLayout
+    );
+
+    cardsGrid->addWidget(
+        cpuCard,
+        0,
+        0
+    );
+
+    // =========================================================
     // GAME DETECTION
-    // ---------------------------------------------------------
+    // =========================================================
 
     QFrame* gameCard =
         createCard(
-            "gameDetectionCard",
+            "statusCard",
             "GAME DETECTION",
-            "Automatically detect when a game is running."
+            "Currently detected games."
         );
-
 
     QVBoxLayout* gameLayout =
         qobject_cast<QVBoxLayout*>(
             gameCard->layout()
         );
 
-
     detectedGameLabel =
-        new QLabel("No game detected");
+        new QLabel(
+            "No game detected"
+        );
 
     detectedGameLabel->setObjectName(
-        "gamingValue"
+        "statusValue"
     );
+
+    detectedGameLabel->setWordWrap(
+        true
+    );
+
+    gameLayout->addStretch();
 
     gameLayout->addWidget(
         detectedGameLabel
     );
 
-
-    statusLayout->addWidget(
-        gameCard
+    cardsGrid->addWidget(
+        gameCard,
+        0,
+        1
     );
 
+    // =========================================================
+    // BACKGROUND OPTIMIZATION
+    // =========================================================
 
-    // ---------------------------------------------------------
-    // PERFORMANCE PROFILE
-    // ---------------------------------------------------------
-
-    QFrame* profileCard =
+    QFrame* backgroundCard =
         createCard(
-            "performanceProfileCard",
-            "PERFORMANCE PROFILE",
-            "Current system performance profile."
+            "statusCard",
+            "BACKGROUND OPTIMIZATION",
+            "Lower priority of selected background applications."
         );
 
-
-    QVBoxLayout* profileLayout =
+    QVBoxLayout* backgroundLayout =
         qobject_cast<QVBoxLayout*>(
-            profileCard->layout()
+            backgroundCard->layout()
         );
 
-
-    performanceProfileLabel =
-        new QLabel("Balanced");
-
-    performanceProfileLabel->setObjectName(
-        "gamingValue"
-    );
-
-    profileLayout->addWidget(
-        performanceProfileLabel
-    );
-
-
-    statusLayout->addWidget(
-        profileCard
-    );
-
-
-    mainLayout->addLayout(
-        statusLayout
-    );
-
-
-    // =========================================================
-    // SETTINGS
-    // =========================================================
-
-    QFrame* settingsCard =
-        new QFrame();
-
-    settingsCard->setObjectName(
-        "gamingSettingsCard"
-    );
-
-
-    QVBoxLayout* settingsLayout =
-        new QVBoxLayout(settingsCard);
-
-    settingsLayout->setContentsMargins(
-        20,
-        18,
-        20,
-        18
-    );
-
-    settingsLayout->setSpacing(14);
-
-
-    QLabel* settingsTitle =
-        new QLabel("Gaming Settings");
-
-    settingsTitle->setObjectName(
-        "gamingSectionTitle"
-    );
-
-
-    settingsLayout->addWidget(
-        settingsTitle
-    );
-
-
-    // ---------------------------------------------------------
-    // OPTION 1
-    // ---------------------------------------------------------
-
-    QFrame* priorityRow =
-        new QFrame();
-
-    priorityRow->setObjectName(
-        "gamingSettingRow"
-    );
-
-
-    QHBoxLayout* priorityLayout =
-        new QHBoxLayout(priorityRow);
-
-    priorityLayout->setContentsMargins(
-        14,
-        10,
-        14,
-        10
-    );
-
-
-    QLabel* priorityText =
+    backgroundOptimizationStatusLabel =
         new QLabel(
-            "High CPU priority"
+            "Optimization is disabled"
         );
 
-    priorityText->setObjectName(
-        "gamingSettingTitle"
+    backgroundOptimizationStatusLabel->setObjectName(
+        "cpuPriorityStatusLabel"
     );
 
+    backgroundOptimizationStatusLabel->setWordWrap(
+        true
+    );
 
-    QLabel* priorityDescription =
-        new QLabel(
-            "Prioritize the active game process."
+    backgroundOptimizationButton =
+        new QPushButton(
+            "OFF"
         );
 
-    priorityDescription->setObjectName(
-        "gamingSettingDescription"
+    backgroundOptimizationButton->setObjectName(
+        "settingToggleButton"
     );
 
-
-    QVBoxLayout* priorityTextLayout =
-        new QVBoxLayout();
-
-    priorityTextLayout->setSpacing(2);
-
-    priorityTextLayout->addWidget(
-        priorityText
+    backgroundOptimizationButton->setCursor(
+        Qt::PointingHandCursor
     );
 
-    priorityTextLayout->addWidget(
-        priorityDescription
+    backgroundOptimizationButton->setSizePolicy(
+        QSizePolicy::Fixed,
+        QSizePolicy::Fixed
     );
 
-
-    QPushButton* priorityButton =
-        new QPushButton("OFF");
-
-    priorityButton->setCheckable(true);
-
-    priorityButton->setObjectName(
-        "gamingOptionButton"
-    );
-
-    priorityButton->setFixedSize(
-        72,
-        32
-    );
-
-
-    connect(
-        priorityButton,
-        &QPushButton::toggled,
-        this,
-        [priorityButton](bool enabled)
-        {
-            priorityButton->setText(
-                enabled ? "ON" : "OFF"
-            );
-        }
-    );
-
-
-    priorityLayout->addLayout(
-        priorityTextLayout
-    );
-
-    priorityLayout->addStretch();
-
-    priorityLayout->addWidget(
-        priorityButton
-    );
-
-
-    settingsLayout->addWidget(
-        priorityRow
-    );
-
-
-    // ---------------------------------------------------------
-    // OPTION 2
-    // ---------------------------------------------------------
-
-    QFrame* backgroundRow =
-        new QFrame();
-
-    backgroundRow->setObjectName(
-        "gamingSettingRow"
-    );
-
-
-    QHBoxLayout* backgroundLayout =
-        new QHBoxLayout(backgroundRow);
-
-    backgroundLayout->setContentsMargins(
-        14,
-        10,
-        14,
-        10
-    );
-
-
-    QLabel* backgroundText =
-        new QLabel(
-            "Background optimization"
-        );
-
-    backgroundText->setObjectName(
-        "gamingSettingTitle"
-    );
-
-
-    QLabel* backgroundDescription =
-        new QLabel(
-            "Reduce unnecessary background activity."
-        );
-
-    backgroundDescription->setObjectName(
-        "gamingSettingDescription"
-    );
-
-
-    QVBoxLayout* backgroundTextLayout =
-        new QVBoxLayout();
-
-    backgroundTextLayout->setSpacing(2);
-
-    backgroundTextLayout->addWidget(
-        backgroundText
-    );
-
-    backgroundTextLayout->addWidget(
-        backgroundDescription
-    );
-
-
-    QPushButton* backgroundButton =
-        new QPushButton("OFF");
-
-    backgroundButton->setCheckable(true);
-
-    backgroundButton->setObjectName(
-        "gamingOptionButton"
-    );
-
-    backgroundButton->setFixedSize(
-        72,
-        32
-    );
-
-
-    connect(
-        backgroundButton,
-        &QPushButton::toggled,
-        this,
-        [backgroundButton](bool enabled)
-        {
-            backgroundButton->setText(
-                enabled ? "ON" : "OFF"
-            );
-        }
-    );
-
-
-    backgroundLayout->addLayout(
-        backgroundTextLayout
+    backgroundOptimizationButton->setProperty(
+        "active",
+        false
     );
 
     backgroundLayout->addStretch();
 
     backgroundLayout->addWidget(
-        backgroundButton
+        backgroundOptimizationStatusLabel
     );
 
+    QHBoxLayout* backgroundButtonLayout =
+        new QHBoxLayout();
 
-    settingsLayout->addWidget(
-        backgroundRow
+    backgroundButtonLayout->setContentsMargins(
+        0,
+        8,
+        0,
+        0
     );
 
+    backgroundButtonLayout->addStretch();
 
-    mainLayout->addWidget(
-        settingsCard
+    backgroundButtonLayout->addWidget(
+        backgroundOptimizationButton
     );
 
+    backgroundLayout->addLayout(
+        backgroundButtonLayout
+    );
+
+    cardsGrid->addWidget(
+        backgroundCard,
+        1,
+        0
+    );
+
+    // =========================================================
+    // PERFORMANCE PROFILE
+    // =========================================================
+
+    QFrame* performanceCard =
+        createCard(
+            "statusCard",
+            "PERFORMANCE PROFILE",
+            "Currently active Windows power plan."
+        );
+
+    QVBoxLayout* performanceLayout =
+        qobject_cast<QVBoxLayout*>(
+            performanceCard->layout()
+        );
+
+    performanceProfileLabel =
+        new QLabel(
+            m_gamingModeManager
+                .getActivePowerPlanName()
+        );
+
+    performanceProfileLabel->setObjectName(
+        "statusValue"
+    );
+
+    performanceProfileLabel->setWordWrap(
+        true
+    );
+
+    performanceLayout->addStretch();
+
+    performanceLayout->addWidget(
+        performanceProfileLabel
+    );
+
+    cardsGrid->addWidget(
+        performanceCard,
+        1,
+        1
+    );
+
+    cardsGrid->setColumnStretch(
+        0,
+        1
+    );
+
+    cardsGrid->setColumnStretch(
+        1,
+        1
+    );
+
+    mainLayout->addLayout(
+        cardsGrid
+    );
 
     mainLayout->addStretch();
 
+    // =========================================================
+    // GAMING MODE TOGGLE
+    // =========================================================
+
+    connect(
+        modeToggleButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            if (
+                !m_gamingModeManager.isEnabled()
+            )
+            {
+                if (
+                    m_gamingModeManager.enable()
+                )
+                {
+                    m_automaticGamingMode =
+                        false;
+
+                    modeStatusLabel->setText(
+                        "Gaming Mode is ON"
+                    );
+
+                    modeToggleButton->setText(
+                        "DISABLE"
+                    );
+
+                    modeToggleButton->setProperty(
+                        "active",
+                        true
+                    );
+
+                    modeToggleButton->style()->unpolish(
+                        modeToggleButton
+                    );
+
+                    modeToggleButton->style()->polish(
+                        modeToggleButton
+                    );
+
+                    performanceProfileLabel->setText(
+                        m_gamingModeManager
+                            .getActivePowerPlanName()
+                    );
+
+                    if (
+                        m_backgroundOptimizationEnabled
+                    )
+                    {
+                        if (
+                            m_backgroundOptimizationManager
+                                .enable()
+                        )
+                        {
+                            backgroundOptimizationStatusLabel
+                                ->setText(
+                                    "Background applications optimized"
+                                );
+                        }
+                        else
+                        {
+                            backgroundOptimizationStatusLabel
+                                ->setText(
+                                    "Optimization failed"
+                                );
+                        }
+                    }
+
+                    detectRunningGame();
+                }
+            }
+            else
+            {
+                if (
+                    m_gamingModeManager.disable()
+                )
+                {
+                    m_automaticGamingMode =
+                        false;
+
+                    modeStatusLabel->setText(
+                        "Gaming Mode is OFF"
+                    );
+
+                    modeToggleButton->setText(
+                        "ENABLE"
+                    );
+
+                    modeToggleButton->setProperty(
+                        "active",
+                        false
+                    );
+
+                    modeToggleButton->style()->unpolish(
+                        modeToggleButton
+                    );
+
+                    modeToggleButton->style()->polish(
+                        modeToggleButton
+                    );
+
+                    performanceProfileLabel->setText(
+                        m_gamingModeManager
+                            .getActivePowerPlanName()
+                    );
+
+                    restoreModifiedGamePriorities();
+
+                    m_backgroundOptimizationManager
+                        .disable();
+
+                    if (
+                        m_backgroundOptimizationEnabled
+                    )
+                    {
+                        backgroundOptimizationStatusLabel
+                            ->setText(
+                                "Ready • activates with Gaming Mode"
+                            );
+                    }
+                    else
+                    {
+                        backgroundOptimizationStatusLabel
+                            ->setText(
+                                "Optimization is disabled"
+                            );
+                    }
+                }
+            }
+        }
+    );
 
     // =========================================================
-    // INITIAL THEME
+    // AUTO GAMING MODE
     // =========================================================
 
-    setLightMode(false);
+    connect(
+        autoGamingModeButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            m_autoGamingModeEnabled =
+                !m_autoGamingModeEnabled;
+
+            autoGamingModeButton->setText(
+                m_autoGamingModeEnabled
+                    ? "AUTO ON"
+                    : "AUTO OFF"
+            );
+
+            autoGamingModeButton->setProperty(
+                "active",
+                m_autoGamingModeEnabled
+            );
+
+            autoGamingModeButton->style()->unpolish(
+                autoGamingModeButton
+            );
+
+            autoGamingModeButton->style()->polish(
+                autoGamingModeButton
+            );
+
+            if (
+                m_autoGamingModeEnabled
+            )
+            {
+                detectRunningGame();
+            }
+            else
+            {
+                if (
+                    m_automaticGamingMode &&
+                    m_gamingModeManager.isEnabled()
+                )
+                {
+                    if (
+                        m_gamingModeManager.disable()
+                    )
+                    {
+                        m_automaticGamingMode =
+                            false;
+
+                        modeStatusLabel->setText(
+                            "Gaming Mode is OFF"
+                        );
+
+                        modeToggleButton->setText(
+                            "ENABLE"
+                        );
+
+                        modeToggleButton->setProperty(
+                            "active",
+                            false
+                        );
+
+                        modeToggleButton->style()->unpolish(
+                            modeToggleButton
+                        );
+
+                        modeToggleButton->style()->polish(
+                            modeToggleButton
+                        );
+
+                        performanceProfileLabel->setText(
+                            m_gamingModeManager
+                                .getActivePowerPlanName()
+                        );
+
+                        restoreModifiedGamePriorities();
+
+                        m_backgroundOptimizationManager
+                            .disable();
+
+                        if (
+                            m_backgroundOptimizationEnabled
+                        )
+                        {
+                            backgroundOptimizationStatusLabel
+                                ->setText(
+                                    "Ready • activates with Gaming Mode"
+                                );
+                        }
+                    }
+                }
+            }
+        }
+    );
+
+    // =========================================================
+    // HIGH CPU PRIORITY
+    // =========================================================
+
+    connect(
+        cpuPriorityButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            m_highCpuPriorityEnabled =
+                !m_highCpuPriorityEnabled;
+
+            cpuPriorityButton->setText(
+                m_highCpuPriorityEnabled
+                    ? "ON"
+                    : "OFF"
+            );
+
+            cpuPriorityButton->setProperty(
+                "active",
+                m_highCpuPriorityEnabled
+            );
+
+            cpuPriorityButton->style()->unpolish(
+                cpuPriorityButton
+            );
+
+            cpuPriorityButton->style()->polish(
+                cpuPriorityButton
+            );
+
+            if (
+                m_highCpuPriorityEnabled
+            )
+            {
+                cpuPriorityStatusLabel->setText(
+                    "Ready to boost detected game"
+                );
+
+                detectRunningGame();
+            }
+            else
+            {
+                restoreModifiedGamePriorities();
+
+                cpuPriorityStatusLabel->setText(
+                    "Boost game process priority"
+                );
+            }
+        }
+    );
+
+    // =========================================================
+    // BACKGROUND OPTIMIZATION
+    // =========================================================
+
+    connect(
+        backgroundOptimizationButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            m_backgroundOptimizationEnabled =
+                !m_backgroundOptimizationEnabled;
+
+            backgroundOptimizationButton->setText(
+                m_backgroundOptimizationEnabled
+                    ? "ON"
+                    : "OFF"
+            );
+
+            backgroundOptimizationButton->setProperty(
+                "active",
+                m_backgroundOptimizationEnabled
+            );
+
+            backgroundOptimizationButton->style()->unpolish(
+                backgroundOptimizationButton
+            );
+
+            backgroundOptimizationButton->style()->polish(
+                backgroundOptimizationButton
+            );
+
+            if (
+                m_backgroundOptimizationEnabled
+            )
+            {
+                if (
+                    m_gamingModeManager.isEnabled()
+                )
+                {
+                    if (
+                        m_backgroundOptimizationManager
+                            .enable()
+                    )
+                    {
+                        backgroundOptimizationStatusLabel
+                            ->setText(
+                                "Background applications optimized"
+                            );
+                    }
+                    else
+                    {
+                        backgroundOptimizationStatusLabel
+                            ->setText(
+                                "Optimization failed"
+                            );
+                    }
+                }
+                else
+                {
+                    backgroundOptimizationStatusLabel
+                        ->setText(
+                            "Ready • activates with Gaming Mode"
+                        );
+                }
+            }
+            else
+            {
+                m_backgroundOptimizationManager
+                    .disable();
+
+                backgroundOptimizationStatusLabel
+                    ->setText(
+                        "Optimization is disabled"
+                    );
+            }
+        }
+    );
+
+    // =========================================================
+    // GAME DETECTION TIMER
+    // =========================================================
+
+    gameDetectionTimer =
+        new QTimer(this);
+
+    connect(
+        gameDetectionTimer,
+        &QTimer::timeout,
+        this,
+        &GamingMode::detectRunningGame
+    );
+
+    gameDetectionTimer->start(
+        1000
+    );
+
+    detectRunningGame();
+
+    // =========================================================
+    // THEME
+    // =========================================================
+
+    applyTheme();
 }
-
 
 // =============================================================
 // CREATE CARD
@@ -597,37 +842,37 @@ QFrame* GamingMode::createCard(
         objectName
     );
 
-
     QVBoxLayout* layout =
         new QVBoxLayout(card);
 
     layout->setContentsMargins(
+        20,
         18,
-        16,
-        18,
-        16
+        20,
+        18
     );
 
-    layout->setSpacing(5);
-
+    layout->setSpacing(
+        8
+    );
 
     QLabel* titleLabel =
         new QLabel(title);
 
     titleLabel->setObjectName(
-        "gamingSmallTitle"
+        "cardTitle"
     );
-
 
     QLabel* descriptionLabel =
         new QLabel(description);
 
     descriptionLabel->setObjectName(
-        "gamingSmallDescription"
+        "cardDescription"
     );
 
-    descriptionLabel->setWordWrap(true);
-
+    descriptionLabel->setWordWrap(
+        true
+    );
 
     layout->addWidget(
         titleLabel
@@ -637,27 +882,550 @@ QFrame* GamingMode::createCard(
         descriptionLabel
     );
 
-
     return card;
 }
 
+// =============================================================
+// RESTORE GAME PRIORITIES
+// =============================================================
+
+void GamingMode::restoreModifiedGamePriorities()
+{
+    for (
+        auto it =
+            m_modifiedGameProcesses.begin();
+        it !=
+            m_modifiedGameProcesses.end();
+        ++it
+    )
+    {
+        m_gamingModeManager
+            .resetGameProcessPriority(
+                it.key(),
+                it.value()
+            );
+    }
+
+    m_modifiedGameProcesses.clear();
+}
 
 // =============================================================
-// THEME
+// GAME DETECTION
+// =============================================================
+
+void GamingMode::detectRunningGame()
+{
+    struct GameProcess
+    {
+        const wchar_t* processName;
+        const char* displayName;
+    };
+
+    const GameProcess games[] =
+    {
+        {
+            L"RobloxPlayerBeta.exe",
+            "Roblox"
+        },
+
+        {
+            L"cs2.exe",
+            "Counter-Strike 2"
+        },
+
+        {
+            L"VALORANT-Win64-Shipping.exe",
+            "VALORANT"
+        },
+
+        {
+            L"FortniteClient-Win64-Shipping.exe",
+            "Fortnite"
+        },
+
+        {
+            L"LeagueClient.exe",
+            "League of Legends"
+        },
+
+        {
+            L"Minecraft.exe",
+            "Minecraft"
+        },
+
+        {
+            L"javaw.exe",
+            "Minecraft (Java)"
+        }
+    };
+
+    HANDLE snapshot =
+        CreateToolhelp32Snapshot(
+            TH32CS_SNAPPROCESS,
+            0
+        );
+
+    if (
+        snapshot ==
+        INVALID_HANDLE_VALUE
+    )
+    {
+        detectedGameLabel->setText(
+            "Detection unavailable"
+        );
+
+        cpuPriorityStatusLabel->setText(
+            "Detection unavailable"
+        );
+
+        return;
+    }
+
+    PROCESSENTRY32W entry{};
+
+    entry.dwSize =
+        sizeof(entry);
+
+    QStringList detectedGames;
+
+    QHash<DWORD, QString> currentGameProcesses;
+
+    if (
+        Process32FirstW(
+            snapshot,
+            &entry
+        )
+    )
+    {
+        do
+        {
+            QString processName =
+                QString::fromWCharArray(
+                    entry.szExeFile
+                );
+
+            for (
+                const auto& game :
+                games
+            )
+            {
+                QString targetProcess =
+                    QString::fromWCharArray(
+                        game.processName
+                    );
+
+                if (
+                    processName.compare(
+                        targetProcess,
+                        Qt::CaseInsensitive
+                    ) == 0
+                )
+                {
+                    QString gameName =
+                        QString::fromUtf8(
+                            game.displayName
+                        );
+
+                    if (
+                        !detectedGames.contains(
+                            gameName
+                        )
+                    )
+                    {
+                        detectedGames.append(
+                            gameName
+                        );
+                    }
+
+                    currentGameProcesses.insert(
+                        entry.th32ProcessID,
+                        gameName
+                    );
+
+                    break;
+                }
+            }
+
+        }
+        while (
+            Process32NextW(
+                snapshot,
+                &entry
+            )
+        );
+    }
+
+    CloseHandle(
+        snapshot
+    );
+
+    const bool gameDetected =
+        !detectedGames.isEmpty();
+
+    if (
+        gameDetected
+    )
+    {
+        detectedGameLabel->setText(
+            detectedGames.join(
+                "\n"
+            )
+        );
+    }
+    else
+    {
+        detectedGameLabel->setText(
+            "No game detected"
+        );
+    }
+
+    // =========================================================
+    // HIGH CPU PRIORITY
+    // =========================================================
+
+    QStringList cpuPriorityStatus;
+
+    if (
+        m_highCpuPriorityEnabled
+    )
+    {
+        for (
+            auto it =
+                currentGameProcesses.begin();
+            it !=
+                currentGameProcesses.end();
+            ++it
+        )
+        {
+            const DWORD processId =
+                it.key();
+
+            const QString gameName =
+                it.value();
+
+            if (
+                m_modifiedGameProcesses.contains(
+                    processId
+                )
+            )
+            {
+                cpuPriorityStatus.append(
+                    gameName +
+                    " • HIGH PRIORITY"
+                );
+
+                continue;
+            }
+
+            HANDLE processHandle =
+                OpenProcess(
+                    PROCESS_QUERY_INFORMATION,
+                    FALSE,
+                    processId
+                );
+
+            if (
+                processHandle == nullptr
+            )
+            {
+                cpuPriorityStatus.append(
+                    gameName +
+                    " • FAILED"
+                );
+
+                continue;
+            }
+
+            DWORD originalPriority =
+                GetPriorityClass(
+                    processHandle
+                );
+
+            CloseHandle(
+                processHandle
+            );
+
+            if (
+                originalPriority == 0
+            )
+            {
+                cpuPriorityStatus.append(
+                    gameName +
+                    " • FAILED"
+                );
+
+                continue;
+            }
+
+            if (
+                m_gamingModeManager
+                    .setGameProcessHighPriority(
+                        processId
+                    )
+            )
+            {
+                m_modifiedGameProcesses.insert(
+                    processId,
+                    originalPriority
+                );
+
+                cpuPriorityStatus.append(
+                    gameName +
+                    " • HIGH PRIORITY"
+                );
+            }
+            else
+            {
+                cpuPriorityStatus.append(
+                    gameName +
+                    " • FAILED"
+                );
+            }
+        }
+
+        if (
+            cpuPriorityStatus.isEmpty()
+        )
+        {
+            cpuPriorityStatusLabel->setText(
+                "Ready to boost detected game"
+            );
+        }
+        else
+        {
+            cpuPriorityStatusLabel->setText(
+                cpuPriorityStatus.join(
+                    "\n"
+                )
+            );
+        }
+    }
+    else
+    {
+        if (
+            gameDetected
+        )
+        {
+            cpuPriorityStatusLabel->setText(
+                "Ready to boost detected game"
+            );
+        }
+        else
+        {
+            cpuPriorityStatusLabel->setText(
+                "Boost game process priority"
+            );
+        }
+    }
+
+    // =========================================================
+    // REMOVE CLOSED GAME PROCESSES
+    // =========================================================
+
+    QList<DWORD> processesToRemove;
+
+    for (
+        auto it =
+            m_modifiedGameProcesses.begin();
+        it !=
+            m_modifiedGameProcesses.end();
+        ++it
+    )
+    {
+        if (
+            !currentGameProcesses.contains(
+                it.key()
+            )
+        )
+        {
+            processesToRemove.append(
+                it.key()
+            );
+        }
+    }
+
+    for (
+        DWORD processId :
+        processesToRemove
+    )
+    {
+        m_modifiedGameProcesses.remove(
+            processId
+        );
+    }
+
+    // =========================================================
+    // AUTOMATIC GAMING MODE
+    // =========================================================
+
+    updateAutomaticGamingMode(
+        gameDetected
+    );
+}
+
+// =============================================================
+// AUTOMATIC GAMING MODE
+// =============================================================
+
+void GamingMode::updateAutomaticGamingMode(
+    bool gameDetected
+)
+{
+    if (
+        !m_autoGamingModeEnabled
+    )
+    {
+        return;
+    }
+
+    if (
+        gameDetected
+    )
+    {
+        if (
+            !m_gamingModeManager.isEnabled()
+        )
+        {
+            if (
+                m_gamingModeManager.enable()
+            )
+            {
+                m_automaticGamingMode =
+                    true;
+
+                modeStatusLabel->setText(
+                    "Gaming Mode is ON • Automatic"
+                );
+
+                modeToggleButton->setText(
+                    "DISABLE"
+                );
+
+                modeToggleButton->setProperty(
+                    "active",
+                    true
+                );
+
+                modeToggleButton->style()->unpolish(
+                    modeToggleButton
+                );
+
+                modeToggleButton->style()->polish(
+                    modeToggleButton
+                );
+
+                performanceProfileLabel->setText(
+                    m_gamingModeManager
+                        .getActivePowerPlanName()
+                );
+
+                if (
+                    m_backgroundOptimizationEnabled
+                )
+                {
+                    if (
+                        m_backgroundOptimizationManager
+                            .enable()
+                    )
+                    {
+                        backgroundOptimizationStatusLabel
+                            ->setText(
+                                "Background applications optimized"
+                            );
+                    }
+                    else
+                    {
+                        backgroundOptimizationStatusLabel
+                            ->setText(
+                                "Optimization failed"
+                            );
+                    }
+                }
+            }
+        }
+
+        return;
+    }
+
+    if (
+        m_automaticGamingMode &&
+        m_gamingModeManager.isEnabled()
+    )
+    {
+        if (
+            m_gamingModeManager.disable()
+        )
+        {
+            m_automaticGamingMode =
+                false;
+
+            modeStatusLabel->setText(
+                "Gaming Mode is OFF"
+            );
+
+            modeToggleButton->setText(
+                "ENABLE"
+            );
+
+            modeToggleButton->setProperty(
+                "active",
+                false
+            );
+
+            modeToggleButton->style()->unpolish(
+                modeToggleButton
+            );
+
+            modeToggleButton->style()->polish(
+                modeToggleButton
+            );
+
+            performanceProfileLabel->setText(
+                m_gamingModeManager
+                    .getActivePowerPlanName()
+            );
+
+            restoreModifiedGamePriorities();
+
+            m_backgroundOptimizationManager
+                .disable();
+
+            if (
+                m_backgroundOptimizationEnabled
+            )
+            {
+                backgroundOptimizationStatusLabel
+                    ->setText(
+                        "Ready • activates with Gaming Mode"
+                    );
+            }
+            else
+            {
+                backgroundOptimizationStatusLabel
+                    ->setText(
+                        "Optimization is disabled"
+                    );
+            }
+        }
+    }
+}
+
+// =============================================================
+// LIGHT MODE
 // =============================================================
 
 void GamingMode::setLightMode(
     bool lightMode
 )
 {
-    m_lightMode = lightMode;
+    m_lightMode =
+        lightMode;
 
     applyTheme();
 }
 
-
 // =============================================================
-// APPLY THEME
+// THEME
 // =============================================================
 
 void GamingMode::applyTheme()
@@ -665,217 +1433,357 @@ void GamingMode::applyTheme()
     if (m_lightMode)
     {
         setStyleSheet(R"(
+            #gamingModePage {
+                background: #f5f6f8;
+            }
 
-            #gamingHeader,
+            #pageTitle {
+                color: #15171a;
+                font-size: 28px;
+                font-weight: 700;
+            }
+
+            #pageSubtitle {
+                color: #6b7078;
+                font-size: 14px;
+            }
+
             #gamingModeCard,
-            #gameDetectionCard,
-            #performanceProfileCard,
-            #gamingSettingsCard {
+            #statusCard {
                 background: #ffffff;
-                border: 1px solid #dfe3e9;
-                border-radius: 13px;
+                border: 1px solid #e1e4e8;
+                border-radius: 14px;
             }
 
-            #gamingPageTitle {
-                color: #20242b;
-                font-size: 22px;
-                font-weight: 750;
-            }
-
-            #gamingPageSubtitle {
-                color: #858d99;
-                font-size: 11px;
-            }
-
-            #gamingCardTitle {
-                color: #333943;
-                font-size: 15px;
-                font-weight: 700;
-            }
-
-            #gamingStatus {
-                color: #8a929d;
-                font-size: 11px;
-                font-weight: 700;
-            }
-
-            #gamingStatus[active="true"] {
-                color: #35ad68;
-            }
-
-            #gamingCardDescription,
-            #gamingSmallDescription,
-            #gamingSettingDescription {
-                color: #858d99;
-                font-size: 10px;
-            }
-
-            #gamingToggle {
-                background: #5273e8;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                font-size: 10px;
-                font-weight: 800;
-            }
-
-            #gamingToggle:hover {
-                background: #4567dc;
-            }
-
-            #gamingToggle:checked {
-                background: #35ad68;
-            }
-
-            #gamingSmallTitle,
-            #gamingSectionTitle {
-                color: #737c89;
-                font-size: 9px;
-                font-weight: 800;
-                letter-spacing: 1.3px;
-            }
-
-            #gamingValue {
-                color: #20242b;
-                font-size: 18px;
-                font-weight: 700;
-            }
-
-            #gamingSettingRow {
-                background: #f7f8fa;
-                border: 1px solid #e1e5ea;
-                border-radius: 9px;
-            }
-
-            #gamingSettingTitle {
-                color: #333943;
+            #cardTitle {
+                color: #17191c;
                 font-size: 12px;
-                font-weight: 650;
+                font-weight: 700;
             }
 
-            #gamingOptionButton {
-                background: #e9edf2;
-                color: #626b77;
-                border: 1px solid #d9dee5;
-                border-radius: 7px;
-                font-size: 9px;
-                font-weight: 800;
+            #cardDescription {
+                color: #777d86;
+                font-size: 13px;
             }
 
-            #gamingOptionButton:checked {
-                background: #5273e8;
-                color: white;
-                border: 1px solid #5273e8;
+            #modeStatusLabel {
+                color: #555b63;
+                font-size: 15px;
+                font-weight: 600;
             }
 
+            #statusValue {
+                color: #17191c;
+                font-size: 20px;
+                font-weight: 700;
+            }
+
+            #cpuPriorityStatusLabel {
+                color: #68707b;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            #gamingToggleButton {
+                background: #1677ff;
+                color: #ffffff;
+                border: 1px solid #1677ff;
+                border-radius: 10px;
+                padding: 12px 20px;
+                font-size: 13px;
+                font-weight: 700;
+            }
+
+            #gamingToggleButton:hover {
+                background: #2b86ff;
+                border-color: #2b86ff;
+            }
+
+            #gamingToggleButton:pressed {
+                background: #0f64d8;
+                border-color: #0f64d8;
+            }
+
+            #gamingToggleButton[active="false"] {
+                background: #707781;
+                border-color: #707781;
+            }
+
+            #gamingToggleButton[active="false"]:hover {
+                background: #7c848e;
+                border-color: #7c848e;
+            }
+
+            #settingToggleButton {
+                background: #edf0f4;
+                color: #4b535e;
+                border: 1px solid #dce1e7;
+                border-radius: 9px;
+                padding: 8px 18px;
+                font-size: 12px;
+                font-weight: 700;
+                min-width: 64px;
+            }
+
+            #settingToggleButton:hover {
+                background: #e3e8ee;
+                color: #20252c;
+                border-color: #cfd6de;
+            }
+
+            #settingToggleButton:pressed {
+                background: #d8dee6;
+            }
+
+            #settingToggleButton[active="true"] {
+                background: #1677ff;
+                color: #ffffff;
+                border-color: #1677ff;
+            }
+
+            #settingToggleButton[active="true"]:hover {
+                background: #2b86ff;
+                border-color: #2b86ff;
+            }
+
+            #settingToggleButton[active="true"]:pressed {
+                background: #0f64d8;
+                border-color: #0f64d8;
+            }
+
+            #autoToggleButton {
+                background: #edf0f4;
+                color: #4b535e;
+                border: 1px solid #dce1e7;
+                border-radius: 12px;
+                padding: 6px 12px;
+                font-size: 11px;
+                font-weight: 700;
+                min-width: 72px;
+            }
+
+            #autoToggleButton:hover {
+                background: #e3e8ee;
+                border-color: #cfd6de;
+            }
+
+            #autoToggleButton:pressed {
+                background: #d8dee6;
+            }
+
+            #autoToggleButton[active="true"] {
+                background: #1677ff;
+                color: #ffffff;
+                border-color: #1677ff;
+            }
+
+            #autoToggleButton[active="true"]:hover {
+                background: #2b86ff;
+            }
+
+            #autoToggleButton[active="true"]:pressed {
+                background: #0f64d8;
+            }
         )");
     }
     else
     {
         setStyleSheet(R"(
+            #gamingModePage {
+                background: #0b0e13;
+            }
 
-            #gamingHeader,
+            #pageTitle {
+                color: #f1f3f5;
+                font-size: 28px;
+                font-weight: 700;
+            }
+
+            #pageSubtitle {
+                color: #858b96;
+                font-size: 14px;
+            }
+
             #gamingModeCard,
-            #gameDetectionCard,
-            #performanceProfileCard,
-            #gamingSettingsCard {
-                background: #10141b;
-                border: 1px solid #222832;
-                border-radius: 13px;
+            #statusCard {
+                background: #11151c;
+                border: 1px solid #202630;
+                border-radius: 14px;
             }
 
-            #gamingPageTitle {
-                color: #f0f2f6;
-                font-size: 22px;
-                font-weight: 750;
-            }
-
-            #gamingPageSubtitle {
-                color: #697386;
-                font-size: 11px;
-            }
-
-            #gamingCardTitle {
-                color: #e1e5eb;
-                font-size: 15px;
-                font-weight: 700;
-            }
-
-            #gamingStatus {
-                color: #737d8e;
-                font-size: 11px;
-                font-weight: 700;
-            }
-
-            #gamingStatus[active="true"] {
-                color: #51db8a;
-            }
-
-            #gamingCardDescription,
-            #gamingSmallDescription,
-            #gamingSettingDescription {
-                color: #697386;
-                font-size: 10px;
-            }
-
-            #gamingToggle {
-                background: #5c7cff;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                font-size: 10px;
-                font-weight: 800;
-            }
-
-            #gamingToggle:hover {
-                background: #6d8aff;
-            }
-
-            #gamingToggle:checked {
-                background: #35c77d;
-            }
-
-            #gamingSmallTitle,
-            #gamingSectionTitle {
-                color: #697386;
-                font-size: 9px;
-                font-weight: 800;
-                letter-spacing: 1.3px;
-            }
-
-            #gamingValue {
-                color: #f0f2f6;
-                font-size: 18px;
-                font-weight: 700;
-            }
-
-            #gamingSettingRow {
-                background: #151a22;
-                border: 1px solid #252c36;
-                border-radius: 9px;
-            }
-
-            #gamingSettingTitle {
-                color: #dce1e8;
+            #cardTitle {
+                color: #e9ebef;
                 font-size: 12px;
-                font-weight: 650;
+                font-weight: 700;
             }
 
-            #gamingOptionButton {
-                background: #1d232d;
-                color: #8b95a4;
-                border: 1px solid #2c3440;
-                border-radius: 7px;
-                font-size: 9px;
-                font-weight: 800;
+            #cardDescription {
+                color: #858b96;
+                font-size: 13px;
             }
 
-            #gamingOptionButton:checked {
-                background: #5c7cff;
-                color: white;
-                border: 1px solid #5c7cff;
+            #modeStatusLabel {
+                color: #b4bac4;
+                font-size: 15px;
+                font-weight: 600;
             }
 
+            #statusValue {
+                color: #f0f2f5;
+                font-size: 20px;
+                font-weight: 700;
+            }
+
+            #cpuPriorityStatusLabel {
+                color: #9fa7b3;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            #gamingToggleButton {
+                background: #1677ff;
+                color: #ffffff;
+                border: 1px solid #1677ff;
+                border-radius: 10px;
+                padding: 12px 20px;
+                font-size: 13px;
+                font-weight: 700;
+            }
+
+            #gamingToggleButton:hover {
+                background: #2b86ff;
+                border-color: #2b86ff;
+            }
+
+            #gamingToggleButton:pressed {
+                background: #0f64d8;
+                border-color: #0f64d8;
+            }
+
+            #gamingToggleButton[active="false"] {
+                background: #5f6670;
+                border-color: #5f6670;
+            }
+
+            #gamingToggleButton[active="false"]:hover {
+                background: #6b737e;
+                border-color: #6b737e;
+            }
+
+            #settingToggleButton {
+                background: #242a33;
+                color: #aeb6c2;
+                border: 1px solid #343c48;
+                border-radius: 9px;
+                padding: 8px 18px;
+                font-size: 12px;
+                font-weight: 700;
+                min-width: 64px;
+            }
+
+            #settingToggleButton:hover {
+                background: #2d3541;
+                color: #e5e9ef;
+                border-color: #414b5a;
+            }
+
+            #settingToggleButton:pressed {
+                background: #1d232c;
+            }
+
+            #settingToggleButton[active="true"] {
+                background: #1677ff;
+                color: #ffffff;
+                border: 1px solid #1677ff;
+            }
+
+            #settingToggleButton[active="true"]:hover {
+                background: #2b86ff;
+                border-color: #2b86ff;
+            }
+
+            #settingToggleButton[active="true"]:pressed {
+                background: #0f64d8;
+                border-color: #0f64d8;
+            }
+
+            #autoToggleButton {
+                background: #242a33;
+                color: #aeb6c2;
+                border: 1px solid #343c48;
+                border-radius: 12px;
+                padding: 6px 12px;
+                font-size: 11px;
+                font-weight: 700;
+                min-width: 72px;
+            }
+
+            #autoToggleButton:hover {
+                background: #2d3541;
+                border-color: #414b5a;
+            }
+
+            #autoToggleButton:pressed {
+                background: #1d232c;
+            }
+
+            #autoToggleButton[active="true"] {
+                background: #1677ff;
+                color: #ffffff;
+                border-color: #1677ff;
+            }
+
+            #autoToggleButton[active="true"]:hover {
+                background: #2b86ff;
+            }
+
+            #autoToggleButton[active="true"]:pressed {
+                background: #0f64d8;
+            }
         )");
+    }
+
+    if (autoGamingModeButton != nullptr)
+    {
+        autoGamingModeButton->style()->unpolish(
+            autoGamingModeButton
+        );
+
+        autoGamingModeButton->style()->polish(
+            autoGamingModeButton
+        );
+    }
+
+    if (cpuPriorityButton != nullptr)
+    {
+        cpuPriorityButton->style()->unpolish(
+            cpuPriorityButton
+        );
+
+        cpuPriorityButton->style()->polish(
+            cpuPriorityButton
+        );
+    }
+
+    if (backgroundOptimizationButton != nullptr)
+    {
+        backgroundOptimizationButton->style()->unpolish(
+            backgroundOptimizationButton
+        );
+
+        backgroundOptimizationButton->style()->polish(
+            backgroundOptimizationButton
+        );
+    }
+
+    if (modeToggleButton != nullptr)
+    {
+        modeToggleButton->style()->unpolish(
+            modeToggleButton
+        );
+
+        modeToggleButton->style()->polish(
+            modeToggleButton
+        );
     }
 }

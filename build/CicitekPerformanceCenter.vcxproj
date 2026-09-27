@@ -381,6 +381,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\CicitekPerformanceCenter\src\GUI\Dashboard\LiveGraph.h" />
     <ClCompile Include="C:\CicitekPerformanceCenter\src\GUI\GamingMode\GamingMode.cpp" />
     <ClInclude Include="C:\CicitekPerformanceCenter\src\GUI\GamingMode\GamingMode.h" />
+    <ClCompile Include="C:\CicitekPerformanceCenter\src\GamingMode\GamingModeManager.cpp" />
+    <ClInclude Include="C:\CicitekPerformanceCenter\src\GamingMode\GamingModeManager.h" />
+    <ClCompile Include="C:\CicitekPerformanceCenter\src\GamingMode\BackgroundOptimizationManager.cpp" />
+    <ClInclude Include="C:\CicitekPerformanceCenter\src\GamingMode\BackgroundOptimizationManager.h" />
     <ClCompile Include="C:\CicitekPerformanceCenter\src\CPU\CPU.cpp" />
     <ClCompile Include="C:\CicitekPerformanceCenter\src\RAM\RAM.cpp" />
     <ClCompile Include="C:\CicitekPerformanceCenter\src\System\System.cpp" />

@@ -28,6 +28,11 @@ add_executable(CicitekPerformanceCenter
     src/GUI/GamingMode/GamingMode.cpp
     src/GUI/GamingMode/GamingMode.h
 
+    src/GamingMode/GamingModeManager.cpp
+    src/GamingMode/GamingModeManager.h
+    src/GamingMode/BackgroundOptimizationManager.cpp
+    src/GamingMode/BackgroundOptimizationManager.h
+
     src/CPU/CPU.cpp
     src/RAM/RAM.cpp
     src/System/System.cpp

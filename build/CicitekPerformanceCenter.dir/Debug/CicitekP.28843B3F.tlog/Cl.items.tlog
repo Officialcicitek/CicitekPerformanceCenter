@@ -3,6 +3,8 @@ C:\CicitekPerformanceCenter\src\GUI\MainWindow.cpp;C:\CicitekPerformanceCenter\b
 C:\CicitekPerformanceCenter\src\GUI\Dashboard\Dashboard.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\Dashboard.obj
 C:\CicitekPerformanceCenter\src\GUI\Dashboard\LiveGraph.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\LiveGraph.obj
 C:\CicitekPerformanceCenter\src\GUI\GamingMode\GamingMode.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\GamingMode.obj
+C:\CicitekPerformanceCenter\src\GamingMode\GamingModeManager.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\GamingModeManager.obj
+C:\CicitekPerformanceCenter\src\GamingMode\BackgroundOptimizationManager.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\BackgroundOptimizationManager.obj
 C:\CicitekPerformanceCenter\src\CPU\CPU.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\CPU.obj
 C:\CicitekPerformanceCenter\src\RAM\RAM.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\RAM.obj
 C:\CicitekPerformanceCenter\src\System\System.cpp;C:\CicitekPerformanceCenter\build\CicitekPerformanceCenter.dir\Debug\System.obj
