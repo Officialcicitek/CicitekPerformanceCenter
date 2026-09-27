@@ -1,0 +1,3 @@
+C:/CicitekPerformanceCenter/build/CMakeFiles/CicitekPerformanceCenter.dir
+C:/CicitekPerformanceCenter/build/CMakeFiles/ALL_BUILD.dir
+C:/CicitekPerformanceCenter/build/CMakeFiles/ZERO_CHECK.dir

@@ -25,6 +25,9 @@ add_executable(CicitekPerformanceCenter
     src/GUI/Dashboard/LiveGraph.cpp
     src/GUI/Dashboard/LiveGraph.h
 
+    src/GUI/GamingMode/GamingMode.cpp
+    src/GUI/GamingMode/GamingMode.h
+
     src/CPU/CPU.cpp
     src/RAM/RAM.cpp
     src/System/System.cpp

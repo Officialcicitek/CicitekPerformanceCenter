@@ -1,0 +1,10 @@
+^C:\CICITEKPERFORMANCECENTER\BUILD\CMAKEFILES\71BE668F407D739CFBB51644D5CA3FF2\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/CicitekPerformanceCenter -BC:/CicitekPerformanceCenter/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/CicitekPerformanceCenter/build/CicitekPerformanceCenter.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

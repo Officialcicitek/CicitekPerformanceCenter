@@ -234,6 +234,18 @@ namespace Temperature
 
 
     // =========================
+    // GPU HOTSPOT
+    // =========================
+
+    double GetGPUHotspot()
+    {
+        return GetSensorValue(
+            L"/gpu-nvidia/0/temperature/2"
+        );
+    }
+
+
+    // =========================
     // GPU USAGE
     // =========================
 
@@ -253,6 +265,18 @@ namespace Temperature
     {
         return GetSensorValue(
             L"/gpu-nvidia/0/smalldata/1"
+        );
+    }
+
+
+    // =========================
+    // GPU VRAM TOTAL
+    // =========================
+
+    double GetGPUVRAMTotal()
+    {
+        return GetSensorValue(
+            L"/gpu-nvidia/0/smalldata/2"
         );
     }
 }

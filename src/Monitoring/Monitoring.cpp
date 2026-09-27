@@ -46,8 +46,14 @@ namespace Monitoring
         stats.gpuTemperature =
             Temperature::GetGPUTemperature();
 
+        stats.gpuHotspot =
+            Temperature::GetGPUHotspot();
+
         stats.gpuVramUsedGB =
             Temperature::GetGPUVRAMUsed();
+
+        stats.gpuVramTotalGB =
+            Temperature::GetGPUVRAMTotal();
 
 
         // =========================

@@ -18,7 +18,10 @@ namespace Monitoring
 
         double gpuUsage = -1.0;
         double gpuTemperature = -1.0;
+        double gpuHotspot = -1.0;
+
         double gpuVramUsedGB = -1.0;
+        double gpuVramTotalGB = -1.0;
 
 
         // =========================

@@ -14,7 +14,8 @@ LiveGraph::LiveGraph(
     : QWidget(parent),
       m_lineColor(lineColor),
       m_minimum(0.0),
-      m_maximum(100.0)
+      m_maximum(100.0),
+      m_darkMode(true)
 {
     setMinimumHeight(55);
     setMaximumHeight(65);
@@ -43,6 +44,7 @@ void LiveGraph::setRange(
     update();
 }
 
+
 void LiveGraph::setLineColor(
     const QString& color
 )
@@ -52,7 +54,20 @@ void LiveGraph::setLineColor(
     update();
 }
 
-void LiveGraph::addValue(double value)
+
+void LiveGraph::setDarkMode(
+    bool darkMode
+)
+{
+    m_darkMode = darkMode;
+
+    update();
+}
+
+
+void LiveGraph::addValue(
+    double value
+)
 {
     value = qBound(
         m_minimum,
@@ -71,7 +86,9 @@ void LiveGraph::addValue(double value)
 }
 
 
-void LiveGraph::paintEvent(QPaintEvent* event)
+void LiveGraph::paintEvent(
+    QPaintEvent* event
+)
 {
     Q_UNUSED(event);
 
@@ -97,12 +114,27 @@ void LiveGraph::paintEvent(QPaintEvent* event)
 
 
     // =========================================================
+    // COLORS
+    // =========================================================
+
+    const QColor backgroundColor =
+        m_darkMode
+            ? QColor("#10141c")
+            : QColor("#f8f9fb");
+
+    const QColor gridColor =
+        m_darkMode
+            ? QColor("#1c2330")
+            : QColor("#e1e5eb");
+
+
+    // =========================================================
     // BACKGROUND
     // =========================================================
 
     painter.fillRect(
         rect(),
-        QColor("#10141c")
+        backgroundColor
     );
 
 
@@ -111,7 +143,7 @@ void LiveGraph::paintEvent(QPaintEvent* event)
     // =========================================================
 
     QPen gridPen(
-        QColor("#1c2330")
+        gridColor
     );
 
     gridPen.setWidth(
@@ -236,7 +268,7 @@ void LiveGraph::paintEvent(QPaintEvent* event)
         QColor(m_lineColor);
 
     areaColor.setAlpha(
-        25
+        m_darkMode ? 25 : 20
     );
 
 

@@ -23,6 +23,8 @@ public:
         const QString& color
     );
 
+    void setDarkMode(bool darkMode);
+
 protected:
     void paintEvent(QPaintEvent* event) override;
 
@@ -32,6 +34,8 @@ private:
 
     double m_minimum;
     double m_maximum;
+
+    bool m_darkMode = true;
 
     static constexpr int MaxSamples = 60;
 };
