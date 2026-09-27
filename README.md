@@ -198,9 +198,9 @@ The profile system is designed to make it possible to expand game-specific optim
 
 🚧 **Active development**
 
-### v0.30 — Gaming Mode
+### v0.3.0 — Gaming Mode
 
-The v0.30 update introduces the first complete Gaming Mode system, including:
+The v0.3.0 update introduces the first complete Gaming Mode system, including:
 
 * Automatic game detection
 * Windows power plan management
