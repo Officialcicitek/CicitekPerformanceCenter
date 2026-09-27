@@ -13,73 +13,46 @@ class Dashboard : public QWidget
 public:
     explicit Dashboard(QWidget* parent = nullptr);
 
+    void setLightMode(bool lightMode);
+
 private:
-    // =========================
+    bool m_lightMode = false;
+
     // CPU
-    // =========================
+    QLabel* cpuUsageLabel = nullptr;
+    QLabel* cpuTemperatureLabel = nullptr;
+    QProgressBar* cpuProgressBar = nullptr;
+    LiveGraph* cpuGraph = nullptr;
+    LiveGraph* cpuTemperatureGraph = nullptr;
 
-    QLabel* cpuUsageLabel;
-    QLabel* cpuTemperatureLabel;
-
-    QProgressBar* cpuProgressBar;
-
-    LiveGraph* cpuGraph;
-    LiveGraph* cpuTemperatureGraph;
-
-
-    // =========================
     // GPU
-    // =========================
+    QLabel* gpuUsageLabel = nullptr;
+    QLabel* gpuTemperatureLabel = nullptr;
+    QLabel* gpuHotspotLabel = nullptr;
+    QLabel* gpuNameLabel = nullptr;
+    QLabel* gpuVramLabel = nullptr;
+    QProgressBar* gpuProgressBar = nullptr;
+    LiveGraph* gpuGraph = nullptr;
+    LiveGraph* gpuHotspotGraph = nullptr;
+    LiveGraph* gpuTemperatureGraph = nullptr;
 
-    QLabel* gpuUsageLabel;
-    QLabel* gpuTemperatureLabel;
-    QLabel* gpuNameLabel;
-    QLabel* gpuVramLabel;
-
-    QProgressBar* gpuProgressBar;
-
-    LiveGraph* gpuGraph;
-    LiveGraph* gpuTemperatureGraph;
-
-
-    // =========================
     // RAM
-    // =========================
+    QLabel* ramUsageLabel = nullptr;
+    QLabel* ramPercentageLabel = nullptr;
+    QProgressBar* ramProgressBar = nullptr;
+    LiveGraph* ramGraph = nullptr;
 
-    QLabel* ramUsageLabel;
-    QLabel* ramPercentageLabel;
+    // STORAGE
+    QLabel* diskReadLabel = nullptr;
+    QLabel* diskWriteLabel = nullptr;
 
-    QProgressBar* ramProgressBar;
-
-    LiveGraph* ramGraph;
-
-
-    // =========================
-    // DISK
-    // =========================
-
-    QLabel* diskReadLabel;
-    QLabel* diskWriteLabel;
-
-
-    // =========================
     // NETWORK
-    // =========================
+    QLabel* networkDownloadLabel = nullptr;
+    QLabel* networkUploadLabel = nullptr;
 
-    QLabel* networkDownloadLabel;
-    QLabel* networkUploadLabel;
-
-
-    // =========================
     // SYSTEM
-    // =========================
-
-    QLabel* uptimeLabel;
-
-
-    // =========================
-    // UPDATE
-    // =========================
+    QLabel* cpuNameLabel = nullptr;
+    QLabel* uptimeLabel = nullptr;
 
     void updateStats();
 };

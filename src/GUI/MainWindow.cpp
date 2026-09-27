@@ -1,14 +1,17 @@
 #include "MainWindow.h"
 
 #include "Dashboard/Dashboard.h"
+#include "GamingMode/GamingMode.h"
 
 #include <QFrame>
+#include <QStyle>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QList>
 #include <QPushButton>
+#include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QList>
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -18,25 +21,56 @@ MainWindow::MainWindow(QWidget* parent)
     resize(1360, 820);
     setMinimumSize(1100, 700);
 
-    QWidget* central = new QWidget(this);
-    central->setObjectName("central");
 
-    setCentralWidget(central);
+    // =========================================================
+    // CENTRAL WIDGET
+    // =========================================================
 
-    QHBoxLayout* mainLayout = new QHBoxLayout(central);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
+    QWidget* central =
+        new QWidget(this);
+
+    central->setObjectName(
+        "central"
+    );
+
+    setCentralWidget(
+        central
+    );
+
+
+    QHBoxLayout* mainLayout =
+        new QHBoxLayout(central);
+
+    mainLayout->setContentsMargins(
+        0,
+        0,
+        0,
+        0
+    );
+
+    mainLayout->setSpacing(
+        0
+    );
 
 
     // =========================================================
     // SIDEBAR
     // =========================================================
 
-    QFrame* sidebar = new QFrame();
-    sidebar->setObjectName("sidebar");
-    sidebar->setFixedWidth(250);
+    QFrame* sidebar =
+        new QFrame();
 
-    QVBoxLayout* sidebarLayout = new QVBoxLayout(sidebar);
+    sidebar->setObjectName(
+        "sidebar"
+    );
+
+    sidebar->setFixedWidth(
+        250
+    );
+
+
+    QVBoxLayout* sidebarLayout =
+        new QVBoxLayout(sidebar);
 
     sidebarLayout->setContentsMargins(
         18,
@@ -45,19 +79,31 @@ MainWindow::MainWindow(QWidget* parent)
         18
     );
 
-    sidebarLayout->setSpacing(6);
+    sidebarLayout->setSpacing(
+        6
+    );
 
 
     // =========================================================
     // BRAND
     // =========================================================
 
-    QFrame* brandContainer = new QFrame();
-    brandContainer->setObjectName("brandContainer");
-    brandContainer->setFixedHeight(62);
+    QFrame* brandContainer =
+        new QFrame();
+
+    brandContainer->setObjectName(
+        "brandContainer"
+    );
+
+    brandContainer->setFixedHeight(
+        62
+    );
+
 
     QHBoxLayout* brandLayout =
-        new QHBoxLayout(brandContainer);
+        new QHBoxLayout(
+            brandContainer
+        );
 
     brandLayout->setContentsMargins(
         8,
@@ -66,12 +112,22 @@ MainWindow::MainWindow(QWidget* parent)
         0
     );
 
-    brandLayout->setSpacing(11);
+    brandLayout->setSpacing(
+        11
+    );
 
 
-    QFrame* brandMark = new QFrame();
-    brandMark->setObjectName("brandMark");
-    brandMark->setFixedSize(34, 34);
+    QFrame* brandMark =
+        new QFrame();
+
+    brandMark->setObjectName(
+        "brandMark"
+    );
+
+    brandMark->setFixedSize(
+        34,
+        34
+    );
 
 
     QLabel* brandMarkText =
@@ -81,11 +137,17 @@ MainWindow::MainWindow(QWidget* parent)
         "brandMarkText"
     );
 
+
     QVBoxLayout* markLayout =
-        new QVBoxLayout(brandMark);
+        new QVBoxLayout(
+            brandMark
+        );
 
     markLayout->setContentsMargins(
-        0, 0, 0, 0
+        0,
+        0,
+        0,
+        0
     );
 
     markLayout->setAlignment(
@@ -100,27 +162,46 @@ MainWindow::MainWindow(QWidget* parent)
     QVBoxLayout* brandTextLayout =
         new QVBoxLayout();
 
-    brandTextLayout->setSpacing(0);
+    brandTextLayout->setSpacing(
+        0
+    );
 
 
     QLabel* brand =
         new QLabel("CICITEK");
 
-    brand->setObjectName("brand");
+    brand->setObjectName(
+        "brand"
+    );
 
 
     QLabel* brandSub =
-        new QLabel("PERFORMANCE CENTER");
+        new QLabel(
+            "PERFORMANCE CENTER"
+        );
 
-    brandSub->setObjectName("brandSub");
+    brandSub->setObjectName(
+        "brandSub"
+    );
 
 
-    brandTextLayout->addWidget(brand);
-    brandTextLayout->addWidget(brandSub);
+    brandTextLayout->addWidget(
+        brand
+    );
+
+    brandTextLayout->addWidget(
+        brandSub
+    );
 
 
-    brandLayout->addWidget(brandMark);
-    brandLayout->addLayout(brandTextLayout);
+    brandLayout->addWidget(
+        brandMark
+    );
+
+    brandLayout->addLayout(
+        brandTextLayout
+    );
+
     brandLayout->addStretch();
 
 
@@ -134,15 +215,26 @@ MainWindow::MainWindow(QWidget* parent)
     // =========================================================
 
     QLabel* navigation =
-        new QLabel("WORKSPACE");
+        new QLabel(
+            "WORKSPACE"
+        );
 
     navigation->setObjectName(
         "navigationLabel"
     );
 
-    sidebarLayout->addSpacing(17);
-    sidebarLayout->addWidget(navigation);
-    sidebarLayout->addSpacing(7);
+
+    sidebarLayout->addSpacing(
+        17
+    );
+
+    sidebarLayout->addWidget(
+        navigation
+    );
+
+    sidebarLayout->addSpacing(
+        7
+    );
 
 
     // =========================================================
@@ -150,19 +242,29 @@ MainWindow::MainWindow(QWidget* parent)
     // =========================================================
 
     QPushButton* dashboardButton =
-        new QPushButton("Dashboard");
+        new QPushButton(
+            "Dashboard"
+        );
 
     QPushButton* gamingButton =
-        new QPushButton("Gaming Mode");
+        new QPushButton(
+            "Gaming Mode"
+        );
 
     QPushButton* processesButton =
-        new QPushButton("Processes");
+        new QPushButton(
+            "Processes"
+        );
 
     QPushButton* tweaksButton =
-        new QPushButton("Tweaks");
+        new QPushButton(
+            "Tweaks"
+        );
 
     QPushButton* logsButton =
-        new QPushButton("Logs");
+        new QPushButton(
+            "Logs"
+        );
 
 
     dashboardButton->setObjectName(
@@ -198,7 +300,9 @@ MainWindow::MainWindow(QWidget* parent)
 
     for (QPushButton* button : navButtons)
     {
-        button->setMinimumHeight(46);
+        button->setMinimumHeight(
+            46
+        );
 
         sidebarLayout->addWidget(
             button
@@ -226,7 +330,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     QVBoxLayout* systemLayout =
-        new QVBoxLayout(systemCard);
+        new QVBoxLayout(
+            systemCard
+        );
 
     systemLayout->setContentsMargins(
         14,
@@ -235,11 +341,15 @@ MainWindow::MainWindow(QWidget* parent)
         13
     );
 
-    systemLayout->setSpacing(7);
+    systemLayout->setSpacing(
+        7
+    );
 
 
     QLabel* systemLabel =
-        new QLabel("SYSTEM");
+        new QLabel(
+            "SYSTEM"
+        );
 
     systemLabel->setObjectName(
         "systemLabel"
@@ -250,10 +360,15 @@ MainWindow::MainWindow(QWidget* parent)
         new QHBoxLayout();
 
     systemStatusLayout->setContentsMargins(
-        0, 0, 0, 0
+        0,
+        0,
+        0,
+        0
     );
 
-    systemStatusLayout->setSpacing(7);
+    systemStatusLayout->setSpacing(
+        7
+    );
 
 
     QLabel* statusDot =
@@ -265,7 +380,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     QLabel* statusText =
-        new QLabel("Monitoring active");
+        new QLabel(
+            "Monitoring active"
+        );
 
     statusText->setObjectName(
         "statusText"
@@ -324,7 +441,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     QVBoxLayout* contentLayout =
-        new QVBoxLayout(content);
+        new QVBoxLayout(
+            content
+        );
 
     contentLayout->setContentsMargins(
         32,
@@ -333,7 +452,9 @@ MainWindow::MainWindow(QWidget* parent)
         30
     );
 
-    contentLayout->setSpacing(22);
+    contentLayout->setSpacing(
+        22
+    );
 
 
     // =========================================================
@@ -347,11 +468,15 @@ MainWindow::MainWindow(QWidget* parent)
         "header"
     );
 
-    header->setFixedHeight(72);
+    header->setFixedHeight(
+        72
+    );
 
 
     QHBoxLayout* headerLayout =
-        new QHBoxLayout(header);
+        new QHBoxLayout(
+            header
+        );
 
     headerLayout->setContentsMargins(
         20,
@@ -369,14 +494,21 @@ MainWindow::MainWindow(QWidget* parent)
         new QVBoxLayout();
 
     titleLayout->setContentsMargins(
-        0, 0, 0, 0
+        0,
+        0,
+        0,
+        0
     );
 
-    titleLayout->setSpacing(2);
+    titleLayout->setSpacing(
+        2
+    );
 
 
     QLabel* title =
-        new QLabel("Dashboard");
+        new QLabel(
+            "Dashboard"
+        );
 
     title->setObjectName(
         "headerTitle"
@@ -393,8 +525,13 @@ MainWindow::MainWindow(QWidget* parent)
     );
 
 
-    titleLayout->addWidget(title);
-    titleLayout->addWidget(subtitle);
+    titleLayout->addWidget(
+        title
+    );
+
+    titleLayout->addWidget(
+        subtitle
+    );
 
 
     headerLayout->addLayout(
@@ -415,11 +552,15 @@ MainWindow::MainWindow(QWidget* parent)
         "liveContainer"
     );
 
-    liveContainer->setFixedHeight(38);
+    liveContainer->setFixedHeight(
+        38
+    );
 
 
     QHBoxLayout* liveLayout =
-        new QHBoxLayout(liveContainer);
+        new QHBoxLayout(
+            liveContainer
+        );
 
     liveLayout->setContentsMargins(
         12,
@@ -428,7 +569,9 @@ MainWindow::MainWindow(QWidget* parent)
         0
     );
 
-    liveLayout->setSpacing(7);
+    liveLayout->setSpacing(
+        7
+    );
 
 
     QLabel* liveDot =
@@ -477,7 +620,9 @@ MainWindow::MainWindow(QWidget* parent)
         "themeButton"
     );
 
-    themeButton->setCheckable(true);
+    themeButton->setCheckable(
+        true
+    );
 
     themeButton->setFixedSize(
         42,
@@ -521,14 +666,150 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     // =========================================================
-    // DASHBOARD
+    // PAGE STACK
     // =========================================================
 
+    QStackedWidget* pageStack =
+        new QStackedWidget();
+
+    pageStack->setObjectName(
+        "pageStack"
+    );
+
+
     Dashboard* dashboard =
-        new Dashboard(content);
+        new Dashboard();
+
+
+    GamingMode* gamingMode =
+        new GamingMode();
+
+
+    pageStack->addWidget(
+        dashboard
+    );
+
+    pageStack->addWidget(
+        gamingMode
+    );
+
 
     contentLayout->addWidget(
-        dashboard
+        pageStack
+    );
+
+
+    // =========================================================
+    // NAVIGATION
+    // =========================================================
+
+    connect(
+        dashboardButton,
+        &QPushButton::clicked,
+        this,
+        [
+            pageStack,
+            dashboardButton,
+            gamingButton,
+            title,
+            subtitle,
+            dashboard
+        ]()
+        {
+            pageStack->setCurrentWidget(
+                dashboard
+            );
+
+            title->setText(
+                "Dashboard"
+            );
+
+            subtitle->setText(
+                "System performance at a glance"
+            );
+
+
+            dashboardButton->setObjectName(
+                "navActive"
+            );
+
+            gamingButton->setObjectName(
+                "navButton"
+            );
+
+
+            dashboardButton->style()->unpolish(
+                dashboardButton
+            );
+
+            dashboardButton->style()->polish(
+                dashboardButton
+            );
+
+
+            gamingButton->style()->unpolish(
+                gamingButton
+            );
+
+            gamingButton->style()->polish(
+                gamingButton
+            );
+        }
+    );
+
+
+    connect(
+        gamingButton,
+        &QPushButton::clicked,
+        this,
+        [
+            pageStack,
+            dashboardButton,
+            gamingButton,
+            title,
+            subtitle,
+            gamingMode
+        ]()
+        {
+            pageStack->setCurrentWidget(
+                gamingMode
+            );
+
+            title->setText(
+                "Gaming Mode"
+            );
+
+            subtitle->setText(
+                "Optimize your system for gaming"
+            );
+
+
+            dashboardButton->setObjectName(
+                "navButton"
+            );
+
+            gamingButton->setObjectName(
+                "navActive"
+            );
+
+
+            dashboardButton->style()->unpolish(
+                dashboardButton
+            );
+
+            dashboardButton->style()->polish(
+                dashboardButton
+            );
+
+
+            gamingButton->style()->unpolish(
+                gamingButton
+            );
+
+            gamingButton->style()->polish(
+                gamingButton
+            );
+        }
     );
 
 
@@ -555,45 +836,34 @@ MainWindow::MainWindow(QWidget* parent)
             font-family: "Segoe UI";
         }
 
-
         QMainWindow,
         #central {
             background: #080a0f;
         }
 
-
         #content {
             background: #080a0f;
         }
-
-
-        /* =====================================================
-           SIDEBAR
-           ===================================================== */
 
         #sidebar {
             background: #0d1016;
             border-right: 1px solid #202530;
         }
 
-
         #brandContainer {
             background: transparent;
         }
-
 
         #brandMark {
             background: #5c7cff;
             border-radius: 9px;
         }
 
-
         #brandMarkText {
             color: white;
             font-size: 17px;
             font-weight: 900;
         }
-
 
         #brand {
             color: #f5f7fa;
@@ -602,18 +872,12 @@ MainWindow::MainWindow(QWidget* parent)
             letter-spacing: 2px;
         }
 
-
         #brandSub {
             color: #596274;
             font-size: 8px;
             font-weight: 800;
             letter-spacing: 1.8px;
         }
-
-
-        /* =====================================================
-           NAV
-           ===================================================== */
 
         #navigationLabel {
             color: #4f5869;
@@ -622,7 +886,6 @@ MainWindow::MainWindow(QWidget* parent)
             letter-spacing: 1.8px;
             padding-left: 10px;
         }
-
 
         #navButton,
         #navActive {
@@ -634,19 +897,16 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 600;
         }
 
-
         #navButton {
             background: transparent;
             color: #737d8e;
         }
-
 
         #navButton:hover {
             background: #161a22;
             color: #e6e9ee;
             border: 1px solid #242a35;
         }
-
 
         #navActive {
             background: #171d2b;
@@ -655,17 +915,11 @@ MainWindow::MainWindow(QWidget* parent)
             border-left: 3px solid #6888ff;
         }
 
-
-        /* =====================================================
-           SYSTEM CARD
-           ===================================================== */
-
         #systemCard {
             background: #11151d;
             border: 1px solid #222934;
             border-radius: 10px;
         }
-
 
         #systemLabel {
             color: #515c6f;
@@ -674,12 +928,10 @@ MainWindow::MainWindow(QWidget* parent)
             letter-spacing: 1.6px;
         }
 
-
         #statusDot {
             color: #52dc8a;
             font-size: 9px;
         }
-
 
         #statusText {
             color: #a1a9b6;
@@ -687,16 +939,10 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 600;
         }
 
-
         #version {
             color: #555f70;
             font-size: 9px;
         }
-
-
-        /* =====================================================
-           HEADER
-           ===================================================== */
 
         #header {
             background: #10141b;
@@ -704,23 +950,16 @@ MainWindow::MainWindow(QWidget* parent)
             border-radius: 13px;
         }
 
-
         #headerTitle {
             color: #f5f6f8;
             font-size: 22px;
             font-weight: 750;
         }
 
-
         #headerSubtitle {
             color: #697386;
             font-size: 11px;
         }
-
-
-        /* =====================================================
-           LIVE
-           ===================================================== */
 
         #liveContainer {
             background: #101b17;
@@ -728,12 +967,10 @@ MainWindow::MainWindow(QWidget* parent)
             border-radius: 8px;
         }
 
-
         #liveDot {
             color: #51db8a;
             font-size: 8px;
         }
-
 
         #liveText {
             color: #66c892;
@@ -741,11 +978,6 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 800;
             letter-spacing: 1.2px;
         }
-
-
-        /* =====================================================
-           THEME
-           ===================================================== */
 
         #themeButton {
             background: #171b23;
@@ -756,24 +988,17 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 600;
         }
 
-
         #themeButton:hover {
             background: #222833;
             color: #ffffff;
             border: 1px solid #3b4657;
         }
 
-
         #themeButton:checked {
             background: #f0f2f5;
             color: #1a1d23;
             border: 1px solid #f0f2f5;
         }
-
-
-        /* =====================================================
-           ACCENT
-           ===================================================== */
 
         #accent {
             background: #5c7cff;
@@ -792,38 +1017,30 @@ MainWindow::MainWindow(QWidget* parent)
             font-family: "Segoe UI";
         }
 
-
         QMainWindow,
         #central {
             background: #f1f3f6;
         }
 
-
         #content {
             background: #f1f3f6;
         }
-
-
-        /* SIDEBAR */
 
         #sidebar {
             background: #ffffff;
             border-right: 1px solid #dfe3e9;
         }
 
-
         #brandMark {
             background: #5273e8;
             border-radius: 9px;
         }
-
 
         #brandMarkText {
             color: white;
             font-size: 17px;
             font-weight: 900;
         }
-
 
         #brand {
             color: #171a20;
@@ -832,14 +1049,12 @@ MainWindow::MainWindow(QWidget* parent)
             letter-spacing: 2px;
         }
 
-
         #brandSub {
             color: #9299a5;
             font-size: 8px;
             font-weight: 800;
             letter-spacing: 1.8px;
         }
-
 
         #navigationLabel {
             color: #9ba2ad;
@@ -848,7 +1063,6 @@ MainWindow::MainWindow(QWidget* parent)
             letter-spacing: 1.8px;
             padding-left: 10px;
         }
-
 
         #navButton,
         #navActive {
@@ -860,19 +1074,16 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 600;
         }
 
-
         #navButton {
             background: transparent;
             color: #737b87;
         }
-
 
         #navButton:hover {
             background: #f0f2f5;
             color: #22262d;
             border: 1px solid #e0e3e8;
         }
-
 
         #navActive {
             background: #e9edfb;
@@ -881,15 +1092,11 @@ MainWindow::MainWindow(QWidget* parent)
             border-left: 3px solid #5273e8;
         }
 
-
-        /* SYSTEM */
-
         #systemCard {
             background: #f7f8fa;
             border: 1px solid #dfe3e9;
             border-radius: 10px;
         }
-
 
         #systemLabel {
             color: #969eaa;
@@ -898,12 +1105,10 @@ MainWindow::MainWindow(QWidget* parent)
             letter-spacing: 1.6px;
         }
 
-
         #statusDot {
             color: #35ad68;
             font-size: 9px;
         }
-
 
         #statusText {
             color: #59616e;
@@ -911,14 +1116,10 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 600;
         }
 
-
         #version {
             color: #9aa1ab;
             font-size: 9px;
         }
-
-
-        /* HEADER */
 
         #header {
             background: #ffffff;
@@ -926,21 +1127,16 @@ MainWindow::MainWindow(QWidget* parent)
             border-radius: 13px;
         }
 
-
         #headerTitle {
             color: #171a20;
             font-size: 22px;
             font-weight: 750;
         }
 
-
         #headerSubtitle {
             color: #858d99;
             font-size: 11px;
         }
-
-
-        /* LIVE */
 
         #liveContainer {
             background: #edf8f2;
@@ -948,12 +1144,10 @@ MainWindow::MainWindow(QWidget* parent)
             border-radius: 8px;
         }
 
-
         #liveDot {
             color: #35ad68;
             font-size: 8px;
         }
-
 
         #liveText {
             color: #378c5b;
@@ -961,9 +1155,6 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 800;
             letter-spacing: 1.2px;
         }
-
-
-        /* THEME */
 
         #themeButton {
             background: #ffffff;
@@ -974,21 +1165,16 @@ MainWindow::MainWindow(QWidget* parent)
             font-weight: 600;
         }
 
-
         #themeButton:hover {
             background: #eceff3;
             color: #20242b;
         }
-
 
         #themeButton:checked {
             background: #20242b;
             color: #ffffff;
             border: 1px solid #20242b;
         }
-
-
-        /* ACCENT */
 
         #accent {
             background: #5273e8;
@@ -998,11 +1184,19 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     // =========================================================
-    // APPLY DARK THEME
+    // APPLY INITIAL THEME
     // =========================================================
 
     setStyleSheet(
         darkTheme
+    );
+
+    dashboard->setLightMode(
+        false
+    );
+
+    gamingMode->setLightMode(
+        false
     );
 
 
@@ -1017,24 +1211,46 @@ MainWindow::MainWindow(QWidget* parent)
         [
             this,
             themeButton,
+            dashboard,
+            gamingMode,
             darkTheme,
             lightTheme
         ](bool lightMode)
         {
             if (lightMode)
             {
-                themeButton->setText("☀");
+                themeButton->setText(
+                    "☀"
+                );
 
                 setStyleSheet(
                     lightTheme
                 );
+
+                dashboard->setLightMode(
+                    true
+                );
+
+                gamingMode->setLightMode(
+                    true
+                );
             }
             else
             {
-                themeButton->setText("☾");
+                themeButton->setText(
+                    "☾"
+                );
 
                 setStyleSheet(
                     darkTheme
+                );
+
+                dashboard->setLightMode(
+                    false
+                );
+
+                gamingMode->setLightMode(
+                    false
                 );
             }
         }

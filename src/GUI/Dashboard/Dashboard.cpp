@@ -1,6 +1,7 @@
 #include "Dashboard.h"
 
 #include "../../GPU/GPU.h"
+#include "../../System/System.h"
 #include "LiveGraph.h"
 
 #include <QFrame>
@@ -9,6 +10,7 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QTimer>
+#include <QStyle>
 #include <QVBoxLayout>
 
 #include <iomanip>
@@ -17,6 +19,27 @@
 
 namespace
 {
+    // =========================================================
+    // CONSTANTS
+    // =========================================================
+
+    constexpr int CardHeight = 400;
+
+    constexpr int HeaderHeight = 18;
+    constexpr int MainValueHeight = 42;
+    constexpr int DescriptionHeight = 16;
+
+    constexpr int MainGraphHeight = 60;
+    constexpr int SecondaryRowHeight = 29;
+    constexpr int SecondaryGraphHeight = 60;
+
+    constexpr int ProgressHeight = 5;
+
+
+    // =========================================================
+    // NUMBER FORMAT
+    // =========================================================
+
     QString formatNumber(
         double value,
         int decimals = 1
@@ -45,25 +68,145 @@ namespace
     {
         if (temperature < 60.0)
         {
-            return "#48c9a5";
+            return "#4fd1a5";
         }
 
         if (temperature < 80.0)
         {
-            return "#f0c75e";
+            return "#e8c35c";
         }
 
         if (temperature < 90.0)
         {
-            return "#ff9f68";
+            return "#ee9564";
         }
 
-        return "#ff5f6d";
+        return "#ef6675";
     }
 
 
     // =========================================================
-    // METRIC CARD
+    // TEMPERATURE BADGE
+    // =========================================================
+
+    QFrame* createTemperatureBadge(
+        QLabel*& valueLabel,
+        const QString& title,
+        QWidget* parent
+    )
+    {
+        QFrame* badge =
+            new QFrame(parent);
+
+        badge->setObjectName(
+            "temperatureBadge"
+        );
+
+        badge->setFixedHeight(
+            SecondaryRowHeight
+        );
+
+
+        QHBoxLayout* layout =
+            new QHBoxLayout(badge);
+
+        layout->setContentsMargins(
+            10,
+            4,
+            10,
+            4
+        );
+
+        layout->setSpacing(
+            7
+        );
+
+
+        QLabel* titleLabel =
+            new QLabel(
+                title,
+                badge
+            );
+
+        titleLabel->setObjectName(
+            "temperatureTitle"
+        );
+
+
+        valueLabel =
+            new QLabel(
+                "-- °C",
+                badge
+            );
+
+        valueLabel->setObjectName(
+            "temperatureValue"
+        );
+
+
+        layout->addWidget(
+            titleLabel
+        );
+
+        layout->addStretch();
+
+        layout->addWidget(
+            valueLabel
+        );
+
+
+        return badge;
+    }
+
+
+    // =========================================================
+    // EMPTY ALIGNMENT ROW
+    // =========================================================
+
+    QFrame* createEmptyAlignmentRow(
+        QWidget* parent
+    )
+    {
+        QFrame* row =
+            new QFrame(parent);
+
+        row->setFixedHeight(
+            SecondaryRowHeight
+        );
+
+        row->setAttribute(
+            Qt::WA_TransparentForMouseEvents
+        );
+
+        return row;
+    }
+
+
+    // =========================================================
+    // EMPTY ALIGNMENT GRAPH
+    // =========================================================
+
+    QFrame* createEmptyAlignmentGraph(
+        QWidget* parent
+    )
+    {
+        QFrame* graph =
+            new QFrame(parent);
+
+        graph->setFixedHeight(
+            SecondaryGraphHeight
+        );
+
+        graph->setAttribute(
+            Qt::WA_TransparentForMouseEvents
+        );
+
+        return graph;
+    }
+
+
+    // =========================================================
+    // MAIN METRIC CARD
     // =========================================================
 
     QFrame* createMetricCard(
@@ -72,15 +215,18 @@ namespace
         QLabel*& valueLabel,
         QLabel*& secondaryLabel,
         QProgressBar*& progressBar,
-        LiveGraph*& graph,
-        LiveGraph** temperatureGraph
+        LiveGraph*& graph
     )
     {
         QFrame* card =
             new QFrame();
 
         card->setObjectName(
-            "metricCard"
+            "mainMetricCard"
+        );
+
+        card->setFixedHeight(
+            CardHeight
         );
 
 
@@ -95,7 +241,7 @@ namespace
         );
 
         layout->setSpacing(
-            8
+            0
         );
 
 
@@ -117,36 +263,77 @@ namespace
             0
         );
 
-
-        QLabel* accentLabel =
-            new QLabel("●");
-
-        accentLabel->setObjectName(
-            "metricAccent"
+        header->setAlignment(
+            Qt::AlignVCenter
         );
 
-        accentLabel->setStyleSheet(
+
+        QLabel* accentDot =
+            new QLabel(
+                "●",
+                card
+            );
+
+        accentDot->setFixedHeight(
+            HeaderHeight
+        );
+
+        accentDot->setAlignment(
+            Qt::AlignVCenter
+        );
+
+        accentDot->setStyleSheet(
             QString(
                 "color: %1;"
-                "font-size: 9px;"
+                "font-size: 8px;"
             ).arg(accent)
         );
 
 
         QLabel* titleLabel =
-            new QLabel(title);
+            new QLabel(
+                title,
+                card
+            );
 
         titleLabel->setObjectName(
-            "metricTitle"
+            "cardTitle"
+        );
+
+        titleLabel->setFixedHeight(
+            HeaderHeight
+        );
+
+        titleLabel->setAlignment(
+            Qt::AlignVCenter
+        );
+
+
+        QLabel* liveLabel =
+            new QLabel(
+                "LIVE",
+                card
+            );
+
+        liveLabel->setObjectName(
+            "cardLive"
+        );
+
+        liveLabel->setFixedHeight(
+            HeaderHeight
+        );
+
+        liveLabel->setAlignment(
+            Qt::AlignVCenter
         );
 
 
         header->addWidget(
-            accentLabel
+            accentDot
         );
 
         header->addSpacing(
-            7
+            6
         );
 
         header->addWidget(
@@ -155,9 +342,22 @@ namespace
 
         header->addStretch();
 
+        header->addWidget(
+            liveLabel
+        );
+
 
         layout->addLayout(
             header
+        );
+
+
+        // =====================================================
+        // GAP AFTER HEADER
+        // =====================================================
+
+        layout->addSpacing(
+            5
         );
 
 
@@ -166,10 +366,22 @@ namespace
         // =====================================================
 
         valueLabel =
-            new QLabel("--");
+            new QLabel(
+                "-- %",
+                card
+            );
 
         valueLabel->setObjectName(
-            "metricValue"
+            "bigMetricValue"
+        );
+
+        valueLabel->setFixedHeight(
+            MainValueHeight
+        );
+
+        valueLabel->setAlignment(
+            Qt::AlignLeft |
+            Qt::AlignVCenter
         );
 
 
@@ -179,14 +391,28 @@ namespace
 
 
         // =====================================================
-        // SECONDARY VALUE
+        // DESCRIPTION
         // =====================================================
 
         secondaryLabel =
-            new QLabel("--");
+            new QLabel(
+                title == "MEMORY"
+                    ? "Memory usage"
+                    : "Utilization",
+                card
+            );
 
         secondaryLabel->setObjectName(
-            "metricSecondary"
+            "metricDescription"
+        );
+
+        secondaryLabel->setFixedHeight(
+            DescriptionHeight
+        );
+
+        secondaryLabel->setAlignment(
+            Qt::AlignLeft |
+            Qt::AlignVCenter
         );
 
 
@@ -196,14 +422,25 @@ namespace
 
 
         // =====================================================
+        // GAP BEFORE PROGRESS
+        // =====================================================
+
+        layout->addSpacing(
+            4
+        );
+
+
+        // =====================================================
         // PROGRESS BAR
         // =====================================================
 
         progressBar =
-            new QProgressBar();
+            new QProgressBar(
+                card
+            );
 
         progressBar->setObjectName(
-            "metricProgress"
+            "metricProgressBar"
         );
 
         progressBar->setRange(
@@ -220,28 +457,16 @@ namespace
         );
 
         progressBar->setFixedHeight(
-            5
+            ProgressHeight
         );
 
 
-        progressBar->setStyleSheet(
-            QString(
-                "QProgressBar {"
-                " background: #20252d;"
-                " border: none;"
-                " border-radius: 2px;"
-                "}"
-                "QProgressBar::chunk {"
-                " background: %1;"
-                " border-radius: 2px;"
-                "}"
-            ).arg(accent)
+        // Accent color remains metric-specific.
+        progressBar->setProperty(
+            "accentColor",
+            accent
         );
 
-
-        layout->addSpacing(
-            4
-        );
 
         layout->addWidget(
             progressBar
@@ -249,19 +474,32 @@ namespace
 
 
         // =====================================================
-        // UTILIZATION GRAPH
+        // GAP BEFORE MAIN GRAPH
         // =====================================================
 
         layout->addSpacing(
-            5
+            7
         );
 
+
+        // =====================================================
+        // MAIN USAGE GRAPH
+        // =====================================================
 
         graph =
             new LiveGraph(
                 accent,
                 card
             );
+
+        graph->setRange(
+            0.0,
+            100.0
+        );
+
+        graph->setFixedHeight(
+            MainGraphHeight
+        );
 
 
         layout->addWidget(
@@ -270,33 +508,12 @@ namespace
 
 
         // =====================================================
-        // TEMPERATURE GRAPH
+        // GAP AFTER MAIN GRAPH
         // =====================================================
 
-        if (temperatureGraph != nullptr)
-        {
-            layout->addSpacing(
-                4
-            );
-
-
-            *temperatureGraph =
-                new LiveGraph(
-                    "#48c9a5",
-                    card
-                );
-
-
-            (*temperatureGraph)->setRange(
-                30.0,
-                100.0
-            );
-
-
-            layout->addWidget(
-                *temperatureGraph
-            );
-        }
+        layout->addSpacing(
+            7
+        );
 
 
         return card;
@@ -304,7 +521,13 @@ namespace
 }
 
 
-Dashboard::Dashboard(QWidget* parent)
+// =============================================================
+// CONSTRUCTOR
+// =============================================================
+
+Dashboard::Dashboard(
+    QWidget* parent
+)
     : QWidget(parent)
 {
     setObjectName(
@@ -327,18 +550,18 @@ Dashboard::Dashboard(QWidget* parent)
     );
 
     mainLayout->setSpacing(
-        18
+        16
     );
 
 
     // =========================================================
-    // OVERVIEW HEADER
+    // PAGE HEADER
     // =========================================================
 
-    QHBoxLayout* overviewHeader =
+    QHBoxLayout* header =
         new QHBoxLayout();
 
-    overviewHeader->setContentsMargins(
+    header->setContentsMargins(
         2,
         0,
         2,
@@ -346,67 +569,70 @@ Dashboard::Dashboard(QWidget* parent)
     );
 
 
-    QVBoxLayout* overviewText =
+    QVBoxLayout* headerText =
         new QVBoxLayout();
 
-    overviewText->setSpacing(
+    headerText->setSpacing(
         2
     );
 
 
-    QLabel* overviewTitle =
+    QLabel* title =
         new QLabel(
-            "Performance"
+            "Performance",
+            this
         );
 
-    overviewTitle->setObjectName(
-        "overviewTitle"
+    title->setObjectName(
+        "pageTitle"
     );
 
 
-    QLabel* overviewSubtitle =
+    QLabel* subtitle =
         new QLabel(
-            "Live hardware utilization"
+            "Real-time system overview",
+            this
         );
 
-    overviewSubtitle->setObjectName(
-        "overviewSubtitle"
+    subtitle->setObjectName(
+        "pageSubtitle"
     );
 
 
-    overviewText->addWidget(
-        overviewTitle
+    headerText->addWidget(
+        title
     );
 
-    overviewText->addWidget(
-        overviewSubtitle
+    headerText->addWidget(
+        subtitle
     );
 
 
-    overviewHeader->addLayout(
-        overviewText
+    header->addLayout(
+        headerText
     );
 
-    overviewHeader->addStretch();
+    header->addStretch();
 
 
-    QLabel* updateLabel =
+    QLabel* status =
         new QLabel(
-            "●  Live • 1s refresh"
+            "●  System monitoring active",
+            this
         );
 
-    updateLabel->setObjectName(
-        "updateLabel"
+    status->setObjectName(
+        "systemStatus"
     );
 
 
-    overviewHeader->addWidget(
-        updateLabel
+    header->addWidget(
+        status
     );
 
 
     mainLayout->addLayout(
-        overviewHeader
+        header
     );
 
 
@@ -414,77 +640,335 @@ Dashboard::Dashboard(QWidget* parent)
     // MAIN METRIC CARDS
     // =========================================================
 
-    QGridLayout* metrics =
+    QGridLayout* cards =
         new QGridLayout();
 
-    metrics->setContentsMargins(
+    cards->setContentsMargins(
         0,
         0,
         0,
         0
     );
 
-    metrics->setHorizontalSpacing(
-        14
+    cards->setHorizontalSpacing(
+        12
     );
 
-    metrics->setVerticalSpacing(
-        14
+    cards->setVerticalSpacing(
+        12
     );
 
 
     // =========================================================
-    // CPU
+    // CPU CARD
     // =========================================================
+
+    QLabel* cpuDescriptionLabel =
+        nullptr;
+
 
     QFrame* cpuCard =
         createMetricCard(
             "CPU",
             "#6f8cff",
             cpuUsageLabel,
-            cpuTemperatureLabel,
+            cpuDescriptionLabel,
             cpuProgressBar,
-            cpuGraph,
-            &cpuTemperatureGraph
+            cpuGraph
         );
 
-
-    cpuCard->setStyleSheet(
-        "QFrame {"
-        " background: #131827;"
-        " border: 1px solid #29344f;"
-        " border-radius: 12px;"
-        "}"
+    cpuCard->setProperty(
+        "cardType",
+        "cpu"
     );
 
 
+    QVBoxLayout* cpuLayout =
+        qobject_cast<QVBoxLayout*>(
+            cpuCard->layout()
+        );
+
+
     // =========================================================
-    // GPU
+    // CPU TEMPERATURE
     // =========================================================
+
+    cpuTemperatureLabel =
+        nullptr;
+
+
+    QFrame* cpuTemperatureBadge =
+        createTemperatureBadge(
+            cpuTemperatureLabel,
+            "Temperature",
+            cpuCard
+        );
+
+
+    if (cpuLayout != nullptr)
+    {
+        cpuLayout->addWidget(
+            cpuTemperatureBadge
+        );
+    }
+
+
+    // =========================================================
+    // CPU TEMPERATURE GRAPH
+    // =========================================================
+
+    cpuTemperatureGraph =
+        new LiveGraph(
+            "#6f8cff",
+            cpuCard
+        );
+
+    cpuTemperatureGraph->setRange(
+        20.0,
+        110.0
+    );
+
+    cpuTemperatureGraph->setFixedHeight(
+        SecondaryGraphHeight
+    );
+
+
+    if (cpuLayout != nullptr)
+    {
+        cpuLayout->addSpacing(
+            5
+        );
+
+        cpuLayout->addWidget(
+            cpuTemperatureGraph
+        );
+    }
+
+
+    // =========================================================
+    // CPU BOTTOM ALIGNMENT
+    // =========================================================
+
+    if (cpuLayout != nullptr)
+    {
+        cpuLayout->addSpacing(
+            5
+        );
+
+        cpuLayout->addWidget(
+            createEmptyAlignmentRow(cpuCard)
+        );
+
+        cpuLayout->addSpacing(
+            5
+        );
+
+        cpuLayout->addWidget(
+            createEmptyAlignmentGraph(cpuCard)
+        );
+    }
+
+
+    // =========================================================
+    // GPU CARD
+    // =========================================================
+
+    QLabel* gpuDescriptionLabel =
+        nullptr;
+
 
     QFrame* gpuCard =
         createMetricCard(
             "GPU",
             "#a879ff",
             gpuUsageLabel,
-            gpuTemperatureLabel,
+            gpuDescriptionLabel,
             gpuProgressBar,
-            gpuGraph,
-            &gpuTemperatureGraph
+            gpuGraph
         );
 
-
-    gpuCard->setStyleSheet(
-        "QFrame {"
-        " background: #171427;"
-        " border: 1px solid #3a2c54;"
-        " border-radius: 12px;"
-        "}"
+    gpuCard->setProperty(
+        "cardType",
+        "gpu"
     );
 
 
+    QVBoxLayout* gpuLayout =
+        qobject_cast<QVBoxLayout*>(
+            gpuCard->layout()
+        );
+
+
     // =========================================================
-    // MEMORY
+    // GPU TEMPERATURE
+    // =========================================================
+
+    gpuTemperatureLabel =
+        nullptr;
+
+
+    QFrame* gpuTemperatureBadge =
+        createTemperatureBadge(
+            gpuTemperatureLabel,
+            "Temperature",
+            gpuCard
+        );
+
+
+    if (gpuLayout != nullptr)
+    {
+        gpuLayout->addWidget(
+            gpuTemperatureBadge
+        );
+    }
+
+
+    // =========================================================
+    // GPU TEMPERATURE GRAPH
+    // =========================================================
+
+    gpuTemperatureGraph =
+        new LiveGraph(
+            "#a879ff",
+            gpuCard
+        );
+
+    gpuTemperatureGraph->setRange(
+        20.0,
+        110.0
+    );
+
+    gpuTemperatureGraph->setFixedHeight(
+        SecondaryGraphHeight
+    );
+
+
+    if (gpuLayout != nullptr)
+    {
+        gpuLayout->addSpacing(
+            5
+        );
+
+        gpuLayout->addWidget(
+            gpuTemperatureGraph
+        );
+    }
+
+
+    // =========================================================
+    // GPU HOTSPOT
+    // =========================================================
+
+    QFrame* hotspotRow =
+        new QFrame(
+            gpuCard
+        );
+
+    hotspotRow->setObjectName(
+        "hotspotRow"
+    );
+
+    hotspotRow->setFixedHeight(
+        SecondaryRowHeight
+    );
+
+
+    QHBoxLayout* hotspotLayout =
+        new QHBoxLayout(
+            hotspotRow
+        );
+
+    hotspotLayout->setContentsMargins(
+        10,
+        4,
+        10,
+        4
+    );
+
+    hotspotLayout->setSpacing(
+        6
+    );
+
+
+    QLabel* hotspotTitle =
+        new QLabel(
+            "GPU Hotspot",
+            hotspotRow
+        );
+
+    hotspotTitle->setObjectName(
+        "hotspotTitle"
+    );
+
+
+    gpuHotspotLabel =
+        new QLabel(
+            "-- °C",
+            hotspotRow
+        );
+
+    gpuHotspotLabel->setObjectName(
+        "hotspotValue"
+    );
+
+
+    hotspotLayout->addWidget(
+        hotspotTitle
+    );
+
+    hotspotLayout->addStretch();
+
+    hotspotLayout->addWidget(
+        gpuHotspotLabel
+    );
+
+
+    if (gpuLayout != nullptr)
+    {
+        gpuLayout->addSpacing(
+            5
+        );
+
+        gpuLayout->addWidget(
+            hotspotRow
+        );
+    }
+
+
+    // =========================================================
+    // GPU HOTSPOT GRAPH
+    // =========================================================
+
+    gpuHotspotGraph =
+        new LiveGraph(
+            "#9b82d0",
+            gpuCard
+        );
+
+    gpuHotspotGraph->setRange(
+        30.0,
+        120.0
+    );
+
+    gpuHotspotGraph->setFixedHeight(
+        SecondaryGraphHeight
+    );
+
+
+    if (gpuLayout != nullptr)
+    {
+        gpuLayout->addSpacing(
+            5
+        );
+
+        gpuLayout->addWidget(
+            gpuHotspotGraph
+        );
+    }
+
+
+    // =========================================================
+    // MEMORY CARD
     // =========================================================
 
     QFrame* ramCard =
@@ -494,157 +978,375 @@ Dashboard::Dashboard(QWidget* parent)
             ramUsageLabel,
             ramPercentageLabel,
             ramProgressBar,
-            ramGraph,
-            nullptr
+            ramGraph
+        );
+
+    ramCard->setProperty(
+        "cardType",
+        "ram"
+    );
+
+
+    ramPercentageLabel->setObjectName(
+        "memoryPercentage"
+    );
+
+
+    QVBoxLayout* ramLayout =
+        qobject_cast<QVBoxLayout*>(
+            ramCard->layout()
         );
 
 
-    ramCard->setStyleSheet(
-        "QFrame {"
-        " background: #10201d;"
-        " border: 1px solid #25483f;"
-        " border-radius: 12px;"
-        "}"
+    // =========================================================
+    // MEMORY SECONDARY INFORMATION
+    // =========================================================
+
+    QFrame* memoryInfoRow =
+        new QFrame(
+            ramCard
+        );
+
+    memoryInfoRow->setObjectName(
+        "memoryInfoRow"
     );
+
+    memoryInfoRow->setFixedHeight(
+        SecondaryRowHeight
+    );
+
+
+    QHBoxLayout* memoryInfoLayout =
+        new QHBoxLayout(
+            memoryInfoRow
+        );
+
+    memoryInfoLayout->setContentsMargins(
+        10,
+        4,
+        10,
+        4
+    );
+
+
+    QLabel* memoryInfoTitle =
+        new QLabel(
+            "Memory",
+            memoryInfoRow
+        );
+
+    memoryInfoTitle->setObjectName(
+        "memoryInfoTitle"
+    );
+
+
+    QLabel* memoryInfoValue =
+        new QLabel(
+            "Physical memory",
+            memoryInfoRow
+        );
+
+    memoryInfoValue->setObjectName(
+        "memoryInfoValue"
+    );
+
+
+    memoryInfoLayout->addWidget(
+        memoryInfoTitle
+    );
+
+    memoryInfoLayout->addStretch();
+
+    memoryInfoLayout->addWidget(
+        memoryInfoValue
+    );
+
+
+    if (ramLayout != nullptr)
+    {
+        ramLayout->addWidget(
+            memoryInfoRow
+        );
+
+        ramLayout->addSpacing(
+            5
+        );
+
+        ramLayout->addWidget(
+            createEmptyAlignmentGraph(ramCard)
+        );
+
+        ramLayout->addSpacing(
+            5
+        );
+
+        ramLayout->addWidget(
+            createEmptyAlignmentRow(ramCard)
+        );
+
+        ramLayout->addSpacing(
+            5
+        );
+
+        ramLayout->addWidget(
+            createEmptyAlignmentGraph(ramCard)
+        );
+    }
 
 
     // =========================================================
     // ADD CARDS
     // =========================================================
 
-    metrics->addWidget(
+    cards->addWidget(
         cpuCard,
         0,
         0
     );
 
-    metrics->addWidget(
+    cards->addWidget(
         gpuCard,
         0,
         1
     );
 
-    metrics->addWidget(
+    cards->addWidget(
         ramCard,
         0,
         2
     );
 
 
-    metrics->setColumnStretch(
+    cards->setColumnStretch(
         0,
         1
     );
 
-    metrics->setColumnStretch(
+    cards->setColumnStretch(
         1,
         1
     );
 
-    metrics->setColumnStretch(
+    cards->setColumnStretch(
         2,
         1
     );
 
 
     mainLayout->addLayout(
-        metrics
+        cards
     );
 
 
     // =========================================================
-    // GPU DETAILS
+    // SYSTEM INFORMATION
     // =========================================================
 
-    QFrame* gpuInfo =
-        new QFrame();
+    QFrame* infoArea =
+        new QFrame(
+            this
+        );
 
-    gpuInfo->setObjectName(
-        "infoCard"
+    infoArea->setObjectName(
+        "infoArea"
     );
 
 
-    QHBoxLayout* gpuInfoLayout =
-        new QHBoxLayout(gpuInfo);
+    QVBoxLayout* infoLayout =
+        new QVBoxLayout(infoArea);
 
-    gpuInfoLayout->setContentsMargins(
+    infoLayout->setContentsMargins(
         18,
-        12,
+        14,
         18,
+        14
+    );
+
+    infoLayout->setSpacing(
         12
     );
 
 
-    QLabel* gpuInfoTitle =
+    QLabel* infoTitle =
         new QLabel(
-            "GRAPHICS"
+            "SYSTEM INFORMATION",
+            infoArea
         );
 
-    gpuInfoTitle->setObjectName(
-        "infoTitle"
+    infoTitle->setObjectName(
+        "infoSectionTitle"
     );
 
 
-    gpuNameLabel =
-        new QLabel(
-            "GPU: --"
-        );
-
-    gpuNameLabel->setObjectName(
-        "infoText"
-    );
-
-
-    gpuVramLabel =
-        new QLabel(
-            "VRAM: --"
-        );
-
-    gpuVramLabel->setObjectName(
-        "infoText"
-    );
-
-
-    gpuInfoLayout->addWidget(
-        gpuInfoTitle
-    );
-
-    gpuInfoLayout->addSpacing(
-        14
-    );
-
-    gpuInfoLayout->addWidget(
-        gpuNameLabel
-    );
-
-    gpuInfoLayout->addStretch();
-
-    gpuInfoLayout->addWidget(
-        gpuVramLabel
-    );
-
-
-    mainLayout->addWidget(
-        gpuInfo
+    infoLayout->addWidget(
+        infoTitle
     );
 
 
     // =========================================================
-    // DISK + NETWORK
+    // PROCESSOR
     // =========================================================
 
-    QGridLayout* ioLayout =
-        new QGridLayout();
+    QHBoxLayout* cpuInfoRow =
+        new QHBoxLayout();
 
-    ioLayout->setContentsMargins(
+    cpuInfoRow->setContentsMargins(
         0,
         0,
         0,
         0
     );
 
-    ioLayout->setHorizontalSpacing(
-        14
+
+    QLabel* processorLabel =
+        new QLabel(
+            "Processor",
+            infoArea
+        );
+
+    processorLabel->setObjectName(
+        "infoLabel"
+    );
+
+
+    cpuNameLabel =
+        new QLabel(
+            "--",
+            infoArea
+        );
+
+    cpuNameLabel->setObjectName(
+        "infoPrimary"
+    );
+
+
+    cpuInfoRow->addWidget(
+        processorLabel
+    );
+
+    cpuInfoRow->addSpacing(
+        20
+    );
+
+    cpuInfoRow->addWidget(
+        cpuNameLabel
+    );
+
+    cpuInfoRow->addStretch();
+
+
+    infoLayout->addLayout(
+        cpuInfoRow
+    );
+
+
+    // =========================================================
+    // GRAPHICS
+    // =========================================================
+
+    QHBoxLayout* gpuRow =
+        new QHBoxLayout();
+
+    gpuRow->setContentsMargins(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    QLabel* graphicsLabel =
+        new QLabel(
+            "Graphics",
+            infoArea
+        );
+
+    graphicsLabel->setObjectName(
+        "infoLabel"
+    );
+
+
+    gpuNameLabel =
+        new QLabel(
+            "--",
+            infoArea
+        );
+
+    gpuNameLabel->setObjectName(
+        "infoPrimary"
+    );
+
+
+    gpuVramLabel =
+        new QLabel(
+            "VRAM  --",
+            infoArea
+        );
+
+    gpuVramLabel->setObjectName(
+        "infoSecondary"
+    );
+
+
+    gpuRow->addWidget(
+        graphicsLabel
+    );
+
+    gpuRow->addSpacing(
+        20
+    );
+
+    gpuRow->addWidget(
+        gpuNameLabel
+    );
+
+    gpuRow->addStretch();
+
+    gpuRow->addWidget(
+        gpuVramLabel
+    );
+
+
+    infoLayout->addLayout(
+        gpuRow
+    );
+
+
+    // =========================================================
+    // DIVIDER
+    // =========================================================
+
+    QFrame* divider =
+        new QFrame(
+            infoArea
+        );
+
+    divider->setFrameShape(
+        QFrame::HLine
+    );
+
+    divider->setObjectName(
+        "infoDivider"
+    );
+
+
+    infoLayout->addWidget(
+        divider
+    );
+
+
+    // =========================================================
+    // IO ROW
+    // =========================================================
+
+    QHBoxLayout* ioRow =
+        new QHBoxLayout();
+
+    ioRow->setContentsMargins(
+        0,
+        0,
+        0,
+        0
     );
 
 
@@ -652,68 +1354,56 @@ Dashboard::Dashboard(QWidget* parent)
     // STORAGE
     // =========================================================
 
-    QFrame* diskCard =
-        new QFrame();
-
-    diskCard->setObjectName(
-        "smallCard"
-    );
-
-
-    QVBoxLayout* diskLayout =
-        new QVBoxLayout(diskCard);
-
-    diskLayout->setContentsMargins(
-        18,
-        14,
-        18,
-        14
-    );
-
-    diskLayout->setSpacing(
-        6
-    );
-
-
-    QLabel* diskTitle =
+    QLabel* storageLabel =
         new QLabel(
-            "STORAGE"
+            "Storage",
+            infoArea
         );
 
-    diskTitle->setObjectName(
-        "smallTitle"
+    storageLabel->setObjectName(
+        "infoLabel"
     );
 
 
     diskReadLabel =
         new QLabel(
-            "Read   -- MB/s"
+            "Read  -- MB/s",
+            infoArea
         );
 
     diskReadLabel->setObjectName(
-        "smallValue"
+        "infoPrimary"
     );
 
 
     diskWriteLabel =
         new QLabel(
-            "Write  -- MB/s"
+            "Write  -- MB/s",
+            infoArea
         );
 
     diskWriteLabel->setObjectName(
-        "smallValue"
+        "infoSecondary"
     );
 
 
-    diskLayout->addWidget(
-        diskTitle
+    ioRow->addWidget(
+        storageLabel
     );
 
-    diskLayout->addWidget(
+    ioRow->addSpacing(
+        20
+    );
+
+    ioRow->addWidget(
         diskReadLabel
     );
 
-    diskLayout->addWidget(
+    ioRow->addSpacing(
+        12
+    );
+
+    ioRow->addWidget(
         diskWriteLabel
     );
 
@@ -722,157 +1412,95 @@ Dashboard::Dashboard(QWidget* parent)
     // NETWORK
     // =========================================================
 
-    QFrame* networkCard =
-        new QFrame();
-
-    networkCard->setObjectName(
-        "smallCard"
+    ioRow->addSpacing(
+        35
     );
 
 
-    QVBoxLayout* networkLayout =
-        new QVBoxLayout(networkCard);
-
-    networkLayout->setContentsMargins(
-        18,
-        14,
-        18,
-        14
-    );
-
-    networkLayout->setSpacing(
-        6
-    );
-
-
-    QLabel* networkTitle =
+    QLabel* networkLabel =
         new QLabel(
-            "NETWORK"
+            "Network",
+            infoArea
         );
 
-    networkTitle->setObjectName(
-        "smallTitle"
+    networkLabel->setObjectName(
+        "infoLabel"
     );
 
 
     networkDownloadLabel =
         new QLabel(
-            "↓   -- MB/s"
+            "↓  -- MB/s",
+            infoArea
         );
 
     networkDownloadLabel->setObjectName(
-        "smallValue"
+        "infoPrimary"
     );
 
 
     networkUploadLabel =
         new QLabel(
-            "↑   -- MB/s"
+            "↑  -- MB/s",
+            infoArea
         );
 
     networkUploadLabel->setObjectName(
-        "smallValue"
+        "infoSecondary"
     );
 
 
-    networkLayout->addWidget(
-        networkTitle
+    ioRow->addWidget(
+        networkLabel
     );
 
-    networkLayout->addWidget(
+    ioRow->addSpacing(
+        20
+    );
+
+    ioRow->addWidget(
         networkDownloadLabel
     );
 
-    networkLayout->addWidget(
+    ioRow->addSpacing(
+        12
+    );
+
+    ioRow->addWidget(
         networkUploadLabel
     );
 
 
-    ioLayout->addWidget(
-        diskCard,
-        0,
-        0
-    );
-
-    ioLayout->addWidget(
-        networkCard,
-        0,
-        1
-    );
-
-
-    ioLayout->setColumnStretch(
-        0,
-        1
-    );
-
-    ioLayout->setColumnStretch(
-        1,
-        1
-    );
-
-
-    mainLayout->addLayout(
-        ioLayout
-    );
+    ioRow->addStretch();
 
 
     // =========================================================
-    // SYSTEM FOOTER
+    // UPTIME
     // =========================================================
-
-    QFrame* systemCard =
-        new QFrame();
-
-    systemCard->setObjectName(
-        "systemCard"
-    );
-
-
-    QHBoxLayout* systemLayout =
-        new QHBoxLayout(systemCard);
-
-    systemLayout->setContentsMargins(
-        18,
-        10,
-        18,
-        10
-    );
-
-
-    QLabel* systemLabel =
-        new QLabel(
-            "SYSTEM"
-        );
-
-    systemLabel->setObjectName(
-        "smallTitle"
-    );
-
 
     uptimeLabel =
         new QLabel(
-            "Uptime  --"
+            "Uptime  --",
+            infoArea
         );
 
     uptimeLabel->setObjectName(
-        "systemValue"
+        "infoPrimary"
     );
 
 
-    systemLayout->addWidget(
-        systemLabel
-    );
-
-    systemLayout->addStretch();
-
-    systemLayout->addWidget(
+    ioRow->addWidget(
         uptimeLabel
     );
 
 
+    infoLayout->addLayout(
+        ioRow
+    );
+
+
     mainLayout->addWidget(
-        systemCard
+        infoArea
     );
 
 
@@ -880,108 +1508,10 @@ Dashboard::Dashboard(QWidget* parent)
 
 
     // =========================================================
-    // GLOBAL STYLE
+    // INITIAL STYLE
     // =========================================================
 
-    setStyleSheet(
-        "QWidget#dashboard {"
-        "background: transparent;"
-        "}"
-
-        "#overviewTitle {"
-        "color: #eef1f6;"
-        "font-size: 17px;"
-        "font-weight: 750;"
-        "}"
-
-        "#overviewSubtitle {"
-        "color: #687285;"
-        "font-size: 11px;"
-        "}"
-
-        "#updateLabel {"
-        "color: #56c98b;"
-        "font-size: 10px;"
-        "font-weight: 650;"
-        "}"
-
-        "#metricCard {"
-        "border-radius: 12px;"
-        "}"
-
-        "#metricTitle {"
-        "color: #7d8798;"
-        "font-size: 10px;"
-        "font-weight: 800;"
-        "letter-spacing: 1.3px;"
-        "}"
-
-        "#metricValue {"
-        "color: #f2f4f7;"
-        "font-size: 30px;"
-        "font-weight: 750;"
-        "}"
-
-        "#metricSecondary {"
-        "color: #7a8495;"
-        "font-size: 11px;"
-        "}"
-
-        "#infoCard {"
-        "background: #12101b;"
-        "border: 1px solid #30283f;"
-        "border-radius: 9px;"
-        "}"
-
-        "#infoTitle {"
-        "color: #8d73bd;"
-        "font-size: 9px;"
-        "font-weight: 800;"
-        "letter-spacing: 1.3px;"
-        "}"
-
-        "#infoText {"
-        "color: #818b9b;"
-        "font-size: 10px;"
-        "font-weight: 600;"
-        "}"
-
-        "#smallCard {"
-        "background: #11151c;"
-        "border: 1px solid #252c37;"
-        "border-radius: 11px;"
-        "}"
-
-        "#smallCard:hover {"
-        "background: #141922;"
-        "border: 1px solid #303949;"
-        "}"
-
-        "#smallTitle {"
-        "color: #626d7f;"
-        "font-size: 9px;"
-        "font-weight: 800;"
-        "letter-spacing: 1.4px;"
-        "}"
-
-        "#smallValue {"
-        "color: #d9dee6;"
-        "font-size: 13px;"
-        "font-weight: 600;"
-        "}"
-
-        "#systemCard {"
-        "background: #0f1319;"
-        "border: 1px solid #202732;"
-        "border-radius: 9px;"
-        "}"
-
-        "#systemValue {"
-        "color: #929baa;"
-        "font-size: 10px;"
-        "font-weight: 600;"
-        "}"
-    );
+    setLightMode(false);
 
 
     // =========================================================
@@ -992,7 +1522,7 @@ Dashboard::Dashboard(QWidget* parent)
 
 
     // =========================================================
-    // TIMER
+    // UPDATE TIMER
     // =========================================================
 
     QTimer* timer =
@@ -1013,6 +1543,497 @@ Dashboard::Dashboard(QWidget* parent)
 }
 
 
+// =============================================================
+// SET LIGHT MODE
+// =============================================================
+
+void Dashboard::setLightMode(
+    bool lightMode
+)
+{
+    m_lightMode = lightMode;
+
+
+    // =========================================================
+    // UPDATE GRAPHS
+    // =========================================================
+
+    if (cpuGraph != nullptr)
+    {
+        cpuGraph->setDarkMode(!lightMode);
+    }
+
+    if (cpuTemperatureGraph != nullptr)
+    {
+        cpuTemperatureGraph->setDarkMode(!lightMode);
+    }
+
+    if (gpuGraph != nullptr)
+    {
+        gpuGraph->setDarkMode(!lightMode);
+    }
+
+    if (gpuTemperatureGraph != nullptr)
+    {
+        gpuTemperatureGraph->setDarkMode(!lightMode);
+    }
+
+    if (gpuHotspotGraph != nullptr)
+    {
+        gpuHotspotGraph->setDarkMode(!lightMode);
+    }
+
+    if (ramGraph != nullptr)
+    {
+        ramGraph->setDarkMode(!lightMode);
+    }
+
+
+    // =========================================================
+    // LIGHT THEME
+    // =========================================================
+
+    if (lightMode)
+    {
+        setStyleSheet(
+            R"(
+
+                QWidget#dashboard {
+                    background: transparent;
+                }
+
+
+                /* =================================================
+                   HEADER
+                   ================================================= */
+
+                #pageTitle {
+                    color: #171a20;
+                    font-size: 19px;
+                    font-weight: 750;
+                }
+
+                #pageSubtitle {
+                    color: #858d99;
+                    font-size: 11px;
+                }
+
+                #systemStatus {
+                    color: #35ad68;
+                    font-size: 10px;
+                    font-weight: 650;
+                }
+
+
+                /* =================================================
+                   CARDS
+                   ================================================= */
+
+                QFrame#mainMetricCard[cardType="cpu"] {
+                    background: #ffffff;
+                    border: 1px solid #dfe3e9;
+                    border-radius: 13px;
+                }
+
+                QFrame#mainMetricCard[cardType="gpu"] {
+                    background: #ffffff;
+                    border: 1px solid #e2ddec;
+                    border-radius: 13px;
+                }
+
+                QFrame#mainMetricCard[cardType="ram"] {
+                    background: #ffffff;
+                    border: 1px solid #d8e7e1;
+                    border-radius: 13px;
+                }
+
+
+                #cardTitle {
+                    color: #626b78;
+                    font-size: 10px;
+                    font-weight: 800;
+                }
+
+                #cardLive {
+                    color: #a0a7b1;
+                    font-size: 8px;
+                    font-weight: 800;
+                }
+
+                #bigMetricValue {
+                    color: #171a20;
+                    font-size: 32px;
+                    font-weight: 750;
+                }
+
+                #metricDescription {
+                    color: #7b8490;
+                    font-size: 10px;
+                }
+
+                #memoryPercentage {
+                    color: #718079;
+                    font-size: 10px;
+                }
+
+
+                /* =================================================
+                   PROGRESS BAR
+                   ================================================= */
+
+                QProgressBar#metricProgressBar {
+                    background: #e7eaee;
+                    border: none;
+                    border-radius: 2px;
+                }
+
+                QProgressBar#metricProgressBar::chunk {
+                    background: #5273e8;
+                    border-radius: 2px;
+                }
+
+
+                /* =================================================
+                   TEMPERATURE
+                   ================================================= */
+
+                #temperatureBadge {
+                    background: #f5f7f9;
+                    border: 1px solid #e1e5ea;
+                    border-radius: 7px;
+                }
+
+                #temperatureTitle {
+                    color: #7b8490;
+                    font-size: 9px;
+                    font-weight: 600;
+                }
+
+                #temperatureValue {
+                    color: #39414c;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+
+                /* =================================================
+                   MEMORY SECONDARY
+                   ================================================= */
+
+                #memoryInfoRow {
+                    background: #f0f8f5;
+                    border: 1px solid #d6e9e1;
+                    border-radius: 7px;
+                }
+
+                #memoryInfoTitle {
+                    color: #71857c;
+                    font-size: 9px;
+                    font-weight: 600;
+                }
+
+                #memoryInfoValue {
+                    color: #299f78;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+
+                /* =================================================
+                   GPU HOTSPOT
+                   ================================================= */
+
+                #hotspotRow {
+                    background: #f6f3fa;
+                    border: 1px solid #e3ddef;
+                    border-radius: 7px;
+                }
+
+                #hotspotTitle {
+                    color: #747b87;
+                    font-size: 9px;
+                }
+
+                #hotspotValue {
+                    color: #8065b9;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+
+                /* =================================================
+                   SYSTEM INFO
+                   ================================================= */
+
+                #infoArea {
+                    background: #ffffff;
+                    border: 1px solid #dfe3e9;
+                    border-radius: 11px;
+                }
+
+                #infoSectionTitle {
+                    color: #858d99;
+                    font-size: 9px;
+                    font-weight: 800;
+                }
+
+                #infoLabel {
+                    color: #707985;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+                #infoPrimary {
+                    color: #343a43;
+                    font-size: 11px;
+                    font-weight: 600;
+                }
+
+                #infoSecondary {
+                    color: #7c8590;
+                    font-size: 11px;
+                    font-weight: 500;
+                }
+
+                #infoDivider {
+                    color: #e1e5e9;
+                    background: #e1e5e9;
+                    max-height: 1px;
+                }
+
+            )"
+        );
+    }
+
+
+    // =========================================================
+    // DARK THEME
+    // =========================================================
+
+    else
+    {
+        setStyleSheet(
+            R"(
+
+                QWidget#dashboard {
+                    background: transparent;
+                }
+
+
+                /* =================================================
+                   HEADER
+                   ================================================= */
+
+                #pageTitle {
+                    color: #f0f2f6;
+                    font-size: 19px;
+                    font-weight: 750;
+                }
+
+                #pageSubtitle {
+                    color: #687285;
+                    font-size: 11px;
+                }
+
+                #systemStatus {
+                    color: #54c98b;
+                    font-size: 10px;
+                    font-weight: 650;
+                }
+
+
+                /* =================================================
+                   CARDS
+                   ================================================= */
+
+                QFrame#mainMetricCard[cardType="cpu"] {
+                    background: #151a25;
+                    border: 1px solid #29344b;
+                    border-radius: 13px;
+                }
+
+                QFrame#mainMetricCard[cardType="gpu"] {
+                    background: #181621;
+                    border: 1px solid #352d4a;
+                    border-radius: 13px;
+                }
+
+                QFrame#mainMetricCard[cardType="ram"] {
+                    background: #141c1a;
+                    border: 1px solid #29433c;
+                    border-radius: 13px;
+                }
+
+
+                #cardTitle {
+                    color: #8993a3;
+                    font-size: 10px;
+                    font-weight: 800;
+                }
+
+                #cardLive {
+                    color: #505a69;
+                    font-size: 8px;
+                    font-weight: 800;
+                }
+
+                #bigMetricValue {
+                    color: #f1f3f6;
+                    font-size: 32px;
+                    font-weight: 750;
+                }
+
+                #metricDescription {
+                    color: #626c7b;
+                    font-size: 10px;
+                }
+
+                #memoryPercentage {
+                    color: #626c7b;
+                    font-size: 10px;
+                }
+
+
+                /* =================================================
+                   PROGRESS BAR
+                   ================================================= */
+
+                QProgressBar#metricProgressBar {
+                    background: #202630;
+                    border: none;
+                    border-radius: 2px;
+                }
+
+                QProgressBar#metricProgressBar::chunk {
+                    background: #6f8cff;
+                    border-radius: 2px;
+                }
+
+
+                /* =================================================
+                   TEMPERATURE
+                   ================================================= */
+
+                #temperatureBadge {
+                    background: #10141b;
+                    border: 1px solid #252c37;
+                    border-radius: 7px;
+                }
+
+                #temperatureTitle {
+                    color: #687282;
+                    font-size: 9px;
+                    font-weight: 600;
+                }
+
+                #temperatureValue {
+                    color: #dce1e8;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+
+                /* =================================================
+                   MEMORY SECONDARY
+                   ================================================= */
+
+                #memoryInfoRow {
+                    background: #101714;
+                    border: 1px solid #25352f;
+                    border-radius: 7px;
+                }
+
+                #memoryInfoTitle {
+                    color: #687a73;
+                    font-size: 9px;
+                    font-weight: 600;
+                }
+
+                #memoryInfoValue {
+                    color: #4fd1a5;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+
+                /* =================================================
+                   GPU HOTSPOT
+                   ================================================= */
+
+                #hotspotRow {
+                    background: #11101a;
+                    border: 1px solid #29243a;
+                    border-radius: 7px;
+                }
+
+                #hotspotTitle {
+                    color: #646e7e;
+                    font-size: 9px;
+                }
+
+                #hotspotValue {
+                    color: #9b82d0;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+
+                /* =================================================
+                   SYSTEM INFO
+                   ================================================= */
+
+                #infoArea {
+                    background: #11151c;
+                    border: 1px solid #252c36;
+                    border-radius: 11px;
+                }
+
+                #infoSectionTitle {
+                    color: #586273;
+                    font-size: 9px;
+                    font-weight: 800;
+                }
+
+                #infoLabel {
+                    color: #697485;
+                    font-size: 10px;
+                    font-weight: 700;
+                }
+
+                #infoPrimary {
+                    color: #d6dbe3;
+                    font-size: 11px;
+                    font-weight: 600;
+                }
+
+                #infoSecondary {
+                    color: #737e8e;
+                    font-size: 11px;
+                    font-weight: 500;
+                }
+
+                #infoDivider {
+                    color: #222832;
+                    background: #222832;
+                    max-height: 1px;
+                }
+
+            )"
+        );
+    }
+
+
+    // Dynamic properties need a repolish after stylesheet changes.
+    style()->unpolish(this);
+    style()->polish(this);
+    update();
+}
+
+
+// =============================================================
+// UPDATE STATS
+// =============================================================
+
 void Dashboard::updateStats()
 {
     Monitoring::SystemStats stats =
@@ -1027,7 +2048,8 @@ void Dashboard::updateStats()
         formatNumber(
             stats.cpuUsage,
             0
-        ) + " %"
+        ) +
+        " %"
     );
 
 
@@ -1060,7 +2082,6 @@ void Dashboard::updateStats()
 
 
         cpuTemperatureLabel->setText(
-            "Temperature  " +
             formatNumber(
                 stats.cpuTemperature,
                 1
@@ -1072,7 +2093,8 @@ void Dashboard::updateStats()
         cpuTemperatureLabel->setStyleSheet(
             QString(
                 "color: %1;"
-                "font-size: 11px;"
+                "font-size: 10px;"
+                "font-weight: 700;"
             ).arg(color)
         );
 
@@ -1089,19 +2111,13 @@ void Dashboard::updateStats()
     else
     {
         cpuTemperatureLabel->setText(
-            "Temperature  N/A"
-        );
-
-
-        cpuTemperatureLabel->setStyleSheet(
-            "color: #7a8495;"
-            "font-size: 11px;"
+            "N/A"
         );
     }
 
 
     // =========================================================
-    // GPU
+    // GPU USAGE
     // =========================================================
 
     if (stats.gpuUsage >= 0.0)
@@ -1110,7 +2126,8 @@ void Dashboard::updateStats()
             formatNumber(
                 stats.gpuUsage,
                 0
-            ) + " %"
+            ) +
+            " %"
         );
 
 
@@ -1135,7 +2152,6 @@ void Dashboard::updateStats()
             "N/A"
         );
 
-
         gpuProgressBar->setValue(
             0
         );
@@ -1155,7 +2171,6 @@ void Dashboard::updateStats()
 
 
         gpuTemperatureLabel->setText(
-            "Temperature  " +
             formatNumber(
                 stats.gpuTemperature,
                 1
@@ -1167,7 +2182,8 @@ void Dashboard::updateStats()
         gpuTemperatureLabel->setStyleSheet(
             QString(
                 "color: %1;"
-                "font-size: 11px;"
+                "font-size: 10px;"
+                "font-weight: 700;"
             ).arg(color)
         );
 
@@ -1184,19 +2200,60 @@ void Dashboard::updateStats()
     else
     {
         gpuTemperatureLabel->setText(
-            "Temperature  N/A"
-        );
-
-
-        gpuTemperatureLabel->setStyleSheet(
-            "color: #7a8495;"
-            "font-size: 11px;"
+            "N/A"
         );
     }
 
 
     // =========================================================
-    // GPU INFO
+    // GPU HOTSPOT
+    // =========================================================
+
+    if (stats.gpuHotspot >= 0.0)
+    {
+        const QString color =
+            temperatureColor(
+                stats.gpuHotspot
+            );
+
+
+        gpuHotspotLabel->setText(
+            formatNumber(
+                stats.gpuHotspot,
+                1
+            ) +
+            " °C"
+        );
+
+
+        gpuHotspotLabel->setStyleSheet(
+            QString(
+                "color: %1;"
+                "font-size: 10px;"
+                "font-weight: 700;"
+            ).arg(color)
+        );
+
+
+        gpuHotspotGraph->setLineColor(
+            color
+        );
+
+
+        gpuHotspotGraph->addValue(
+            stats.gpuHotspot
+        );
+    }
+    else
+    {
+        gpuHotspotLabel->setText(
+            "N/A"
+        );
+    }
+
+
+    // =========================================================
+    // GPU INFORMATION
     // =========================================================
 
     gpuNameLabel->setText(
@@ -1206,10 +2263,31 @@ void Dashboard::updateStats()
     );
 
 
-    if (stats.gpuVramUsedGB >= 0.0)
+    if (
+        stats.gpuVramUsedGB >= 0.0 &&
+        stats.gpuVramTotalGB >= 0.0
+    )
     {
         gpuVramLabel->setText(
-            "VRAM Used  " +
+            "VRAM  " +
+            formatNumber(
+                stats.gpuVramUsedGB,
+                2
+            ) +
+            " / " +
+            formatNumber(
+                stats.gpuVramTotalGB,
+                2
+            ) +
+            " GB"
+        );
+    }
+    else if (
+        stats.gpuVramUsedGB >= 0.0
+    )
+    {
+        gpuVramLabel->setText(
+            "VRAM  " +
             formatNumber(
                 stats.gpuVramUsedGB,
                 2
@@ -1220,9 +2298,20 @@ void Dashboard::updateStats()
     else
     {
         gpuVramLabel->setText(
-            "VRAM Used  N/A"
+            "VRAM  N/A"
         );
     }
+
+
+    // =========================================================
+    // CPU INFORMATION
+    // =========================================================
+
+    cpuNameLabel->setText(
+        QString::fromLocal8Bit(
+            System::GetCPUName()
+        )
+    );
 
 
     // =========================================================
@@ -1269,11 +2358,11 @@ void Dashboard::updateStats()
 
 
     // =========================================================
-    // DISK
+    // STORAGE
     // =========================================================
 
     diskReadLabel->setText(
-        "Read   " +
+        "Read  " +
         formatNumber(
             stats.diskReadMBps,
             1
@@ -1297,7 +2386,7 @@ void Dashboard::updateStats()
     // =========================================================
 
     networkDownloadLabel->setText(
-        "↓   " +
+        "↓  " +
         formatNumber(
             stats.networkDownloadMBps,
             2
@@ -1307,7 +2396,7 @@ void Dashboard::updateStats()
 
 
     networkUploadLabel->setText(
-        "↑   " +
+        "↑  " +
         formatNumber(
             stats.networkUploadMBps,
             2
@@ -1320,11 +2409,11 @@ void Dashboard::updateStats()
     // UPTIME
     // =========================================================
 
-    unsigned long long hours =
+    const unsigned long long hours =
         stats.uptimeSeconds / 3600;
 
 
-    unsigned long long minutes =
+    const unsigned long long minutes =
         (stats.uptimeSeconds % 3600) / 60;
 
 
