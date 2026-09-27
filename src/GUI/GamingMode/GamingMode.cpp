@@ -19,6 +19,16 @@ GamingMode::GamingMode(QWidget* parent)
 {
     setObjectName("gamingModePage");
 
+    // =========================================================
+    // LOAD SAVED SETTINGS
+    // =========================================================
+
+    loadSettings();
+
+    // =========================================================
+    // MAIN LAYOUT
+    // =========================================================
+
     QVBoxLayout* mainLayout =
         new QVBoxLayout(this);
 
@@ -86,9 +96,7 @@ GamingMode::GamingMode(QWidget* parent)
     );
 
     autoGamingModeButton =
-        new QPushButton(
-            "AUTO ON"
-        );
+        new QPushButton();
 
     autoGamingModeButton->setObjectName(
         "autoToggleButton"
@@ -105,7 +113,13 @@ GamingMode::GamingMode(QWidget* parent)
 
     autoGamingModeButton->setProperty(
         "active",
-        true
+        m_autoGamingModeEnabled
+    );
+
+    autoGamingModeButton->setText(
+        m_autoGamingModeEnabled
+            ? "AUTO ON"
+            : "AUTO OFF"
     );
 
     modeStatusLayout->addWidget(
@@ -175,7 +189,7 @@ GamingMode::GamingMode(QWidget* parent)
         createCard(
             "statusCard",
             "HIGH CPU PRIORITY",
-            "Give detected games higher process priority."
+            "Give supported detected games higher process priority."
         );
 
     QVBoxLayout* cpuCardLayout =
@@ -198,7 +212,9 @@ GamingMode::GamingMode(QWidget* parent)
 
     cpuPriorityButton =
         new QPushButton(
-            "OFF"
+            m_highCpuPriorityEnabled
+                ? "ON"
+                : "OFF"
         );
 
     cpuPriorityButton->setObjectName(
@@ -216,7 +232,7 @@ GamingMode::GamingMode(QWidget* parent)
 
     cpuPriorityButton->setProperty(
         "active",
-        false
+        m_highCpuPriorityEnabled
     );
 
     cpuCardLayout->addStretch();
@@ -310,7 +326,9 @@ GamingMode::GamingMode(QWidget* parent)
 
     backgroundOptimizationStatusLabel =
         new QLabel(
-            "Optimization is disabled"
+            m_backgroundOptimizationEnabled
+                ? "Ready • activates with Gaming Mode"
+                : "Optimization is disabled"
         );
 
     backgroundOptimizationStatusLabel->setObjectName(
@@ -323,7 +341,9 @@ GamingMode::GamingMode(QWidget* parent)
 
     backgroundOptimizationButton =
         new QPushButton(
-            "OFF"
+            m_backgroundOptimizationEnabled
+                ? "ON"
+                : "OFF"
         );
 
     backgroundOptimizationButton->setObjectName(
@@ -341,7 +361,7 @@ GamingMode::GamingMode(QWidget* parent)
 
     backgroundOptimizationButton->setProperty(
         "active",
-        false
+        m_backgroundOptimizationEnabled
     );
 
     backgroundLayout->addStretch();
@@ -581,6 +601,8 @@ GamingMode::GamingMode(QWidget* parent)
             m_autoGamingModeEnabled =
                 !m_autoGamingModeEnabled;
 
+            saveSettings();
+
             autoGamingModeButton->setText(
                 m_autoGamingModeEnabled
                     ? "AUTO ON"
@@ -679,6 +701,8 @@ GamingMode::GamingMode(QWidget* parent)
             m_highCpuPriorityEnabled =
                 !m_highCpuPriorityEnabled;
 
+            saveSettings();
+
             cpuPriorityButton->setText(
                 m_highCpuPriorityEnabled
                     ? "ON"
@@ -703,7 +727,7 @@ GamingMode::GamingMode(QWidget* parent)
             )
             {
                 cpuPriorityStatusLabel->setText(
-                    "Ready to boost detected game"
+                    "Ready to boost supported detected game"
                 );
 
                 detectRunningGame();
@@ -731,6 +755,8 @@ GamingMode::GamingMode(QWidget* parent)
         {
             m_backgroundOptimizationEnabled =
                 !m_backgroundOptimizationEnabled;
+
+            saveSettings();
 
             backgroundOptimizationButton->setText(
                 m_backgroundOptimizationEnabled
@@ -826,6 +852,53 @@ GamingMode::GamingMode(QWidget* parent)
 }
 
 // =============================================================
+// LOAD SETTINGS
+// =============================================================
+
+void GamingMode::loadSettings()
+{
+    m_autoGamingModeEnabled =
+        m_settingsManager.value(
+            "GamingMode/AutoGamingMode",
+            true
+        ).toBool();
+
+    m_highCpuPriorityEnabled =
+        m_settingsManager.value(
+            "GamingMode/HighCpuPriority",
+            false
+        ).toBool();
+
+    m_backgroundOptimizationEnabled =
+        m_settingsManager.value(
+            "GamingMode/BackgroundOptimization",
+            false
+        ).toBool();
+}
+
+// =============================================================
+// SAVE SETTINGS
+// =============================================================
+
+void GamingMode::saveSettings()
+{
+    m_settingsManager.setValue(
+        "GamingMode/AutoGamingMode",
+        m_autoGamingModeEnabled
+    );
+
+    m_settingsManager.setValue(
+        "GamingMode/HighCpuPriority",
+        m_highCpuPriorityEnabled
+    );
+
+    m_settingsManager.setValue(
+        "GamingMode/BackgroundOptimization",
+        m_backgroundOptimizationEnabled
+    );
+}
+
+// =============================================================
 // CREATE CARD
 // =============================================================
 
@@ -915,50 +988,6 @@ void GamingMode::restoreModifiedGamePriorities()
 
 void GamingMode::detectRunningGame()
 {
-    struct GameProcess
-    {
-        const wchar_t* processName;
-        const char* displayName;
-    };
-
-    const GameProcess games[] =
-    {
-        {
-            L"RobloxPlayerBeta.exe",
-            "Roblox"
-        },
-
-        {
-            L"cs2.exe",
-            "Counter-Strike 2"
-        },
-
-        {
-            L"VALORANT-Win64-Shipping.exe",
-            "VALORANT"
-        },
-
-        {
-            L"FortniteClient-Win64-Shipping.exe",
-            "Fortnite"
-        },
-
-        {
-            L"LeagueClient.exe",
-            "League of Legends"
-        },
-
-        {
-            L"Minecraft.exe",
-            "Minecraft"
-        },
-
-        {
-            L"javaw.exe",
-            "Minecraft (Java)"
-        }
-    };
-
     HANDLE snapshot =
         CreateToolhelp32Snapshot(
             TH32CS_SNAPPROCESS,
@@ -1004,47 +1033,31 @@ void GamingMode::detectRunningGame()
                     entry.szExeFile
                 );
 
-            for (
-                const auto& game :
-                games
+            if (
+                !m_gameProfileManager.hasProfile(
+                    processName
+                )
             )
             {
-                QString targetProcess =
-                    QString::fromWCharArray(
-                        game.processName
-                    );
-
-                if (
-                    processName.compare(
-                        targetProcess,
-                        Qt::CaseInsensitive
-                    ) == 0
-                )
-                {
-                    QString gameName =
-                        QString::fromUtf8(
-                            game.displayName
-                        );
-
-                    if (
-                        !detectedGames.contains(
-                            gameName
-                        )
-                    )
-                    {
-                        detectedGames.append(
-                            gameName
-                        );
-                    }
-
-                    currentGameProcesses.insert(
-                        entry.th32ProcessID,
-                        gameName
-                    );
-
-                    break;
-                }
+                continue;
             }
+
+            GameProfile profile =
+                m_gameProfileManager.getProfile(
+                    processName
+                );
+
+            const DWORD processId =
+                entry.th32ProcessID;
+
+            detectedGames.append(
+                profile.gameName
+            );
+
+            currentGameProcesses.insert(
+                processId,
+                profile.gameName
+            );
 
         }
         while (
@@ -1059,8 +1072,14 @@ void GamingMode::detectRunningGame()
         snapshot
     );
 
+    detectedGames.removeDuplicates();
+
     const bool gameDetected =
         !detectedGames.isEmpty();
+
+    // =========================================================
+    // GAME DETECTION DISPLAY
+    // =========================================================
 
     if (
         gameDetected
@@ -1103,20 +1122,6 @@ void GamingMode::detectRunningGame()
             const QString gameName =
                 it.value();
 
-            if (
-                m_modifiedGameProcesses.contains(
-                    processId
-                )
-            )
-            {
-                cpuPriorityStatus.append(
-                    gameName +
-                    " • HIGH PRIORITY"
-                );
-
-                continue;
-            }
-
             HANDLE processHandle =
                 OpenProcess(
                     PROCESS_QUERY_INFORMATION,
@@ -1136,6 +1141,71 @@ void GamingMode::detectRunningGame()
                 continue;
             }
 
+            wchar_t processBuffer[MAX_PATH] = {};
+
+            DWORD bufferSize =
+                MAX_PATH;
+
+            if (
+                QueryFullProcessImageNameW(
+                    processHandle,
+                    0,
+                    processBuffer,
+                    &bufferSize
+                )
+            )
+            {
+                QString fullPath =
+                    QString::fromWCharArray(
+                        processBuffer
+                    );
+
+                QString actualProcessName =
+                    fullPath.section(
+                        '\\',
+                        -1
+                    );
+
+                if (
+                    !m_gameProfileManager.hasProfile(
+                        actualProcessName
+                    )
+                )
+                {
+                    CloseHandle(
+                        processHandle
+                    );
+
+                    cpuPriorityStatus.append(
+                        gameName +
+                        " • PROFILE NOT FOUND"
+                    );
+
+                    continue;
+                }
+
+                GameProfile profile =
+                    m_gameProfileManager.getProfile(
+                        actualProcessName
+                    );
+
+                if (
+                    !profile.highCpuPriority
+                )
+                {
+                    CloseHandle(
+                        processHandle
+                    );
+
+                    cpuPriorityStatus.append(
+                        gameName +
+                        " • PROFILE: PRIORITY OFF"
+                    );
+
+                    continue;
+                }
+            }
+
             DWORD originalPriority =
                 GetPriorityClass(
                     processHandle
@@ -1152,6 +1222,20 @@ void GamingMode::detectRunningGame()
                 cpuPriorityStatus.append(
                     gameName +
                     " • FAILED"
+                );
+
+                continue;
+            }
+
+            if (
+                m_modifiedGameProcesses.contains(
+                    processId
+                )
+            )
+            {
+                cpuPriorityStatus.append(
+                    gameName +
+                    " • HIGH PRIORITY"
                 );
 
                 continue;
@@ -1188,7 +1272,7 @@ void GamingMode::detectRunningGame()
         )
         {
             cpuPriorityStatusLabel->setText(
-                "Ready to boost detected game"
+                "No detected game is configured for High CPU Priority"
             );
         }
         else
@@ -1207,7 +1291,7 @@ void GamingMode::detectRunningGame()
         )
         {
             cpuPriorityStatusLabel->setText(
-                "Ready to boost detected game"
+                "Ready to boost supported detected game"
             );
         }
         else
@@ -1216,6 +1300,151 @@ void GamingMode::detectRunningGame()
                 "Boost game process priority"
             );
         }
+    }
+
+    // =========================================================
+    // BACKGROUND OPTIMIZATION PROFILE
+    // =========================================================
+
+    if (
+        m_backgroundOptimizationEnabled
+    )
+    {
+        bool backgroundProfileFound =
+            false;
+
+        for (
+            auto it =
+                currentGameProcesses.begin();
+            it !=
+                currentGameProcesses.end();
+            ++it
+        )
+        {
+            HANDLE processHandle =
+                OpenProcess(
+                    PROCESS_QUERY_LIMITED_INFORMATION,
+                    FALSE,
+                    it.key()
+                );
+
+            if (
+                processHandle == nullptr
+            )
+            {
+                continue;
+            }
+
+            wchar_t processBuffer[MAX_PATH] = {};
+
+            DWORD bufferSize =
+                MAX_PATH;
+
+            if (
+                QueryFullProcessImageNameW(
+                    processHandle,
+                    0,
+                    processBuffer,
+                    &bufferSize
+                )
+            )
+            {
+                QString fullPath =
+                    QString::fromWCharArray(
+                        processBuffer
+                    );
+
+                QString actualProcessName =
+                    fullPath.section(
+                        '\\',
+                        -1
+                    );
+
+                if (
+                    m_gameProfileManager.hasProfile(
+                        actualProcessName
+                    )
+                )
+                {
+                    GameProfile profile =
+                        m_gameProfileManager.getProfile(
+                            actualProcessName
+                        );
+
+                    if (
+                        profile.backgroundOptimization
+                    )
+                    {
+                        backgroundProfileFound =
+                            true;
+                    }
+                }
+            }
+
+            CloseHandle(
+                processHandle
+            );
+
+            if (
+                backgroundProfileFound
+            )
+            {
+                break;
+            }
+        }
+
+        if (
+            backgroundProfileFound
+        )
+        {
+            if (
+                m_gamingModeManager.isEnabled()
+            )
+            {
+                if (
+                    !m_backgroundOptimizationManager.isEnabled()
+                )
+                {
+                    m_backgroundOptimizationManager
+                        .enable();
+                }
+
+                backgroundOptimizationStatusLabel
+                    ->setText(
+                        "Background optimization active"
+                    );
+            }
+            else
+            {
+                backgroundOptimizationStatusLabel
+                    ->setText(
+                        "Ready • activates with Gaming Mode"
+                    );
+            }
+        }
+        else if (
+            gameDetected
+        )
+        {
+            backgroundOptimizationStatusLabel
+                ->setText(
+                    "Profile does not use background optimization"
+                );
+        }
+        else
+        {
+            backgroundOptimizationStatusLabel
+                ->setText(
+                    "Waiting for supported game"
+                );
+        }
+    }
+    else
+    {
+        backgroundOptimizationStatusLabel
+            ->setText(
+                "Optimization is disabled"
+            );
     }
 
     // =========================================================

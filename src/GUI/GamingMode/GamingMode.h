@@ -7,6 +7,8 @@
 
 #include "../../GamingMode/GamingModeManager.h"
 #include "../../GamingMode/BackgroundOptimizationManager.h"
+#include "../../GamingMode/GameProfileManager.h"
+#include "../../System/SettingsManager.h"
 
 class QLabel;
 class QFrame;
@@ -24,11 +26,14 @@ private:
 
     bool m_autoGamingModeEnabled = true;
     bool m_automaticGamingMode = false;
+
     bool m_highCpuPriorityEnabled = false;
     bool m_backgroundOptimizationEnabled = false;
 
     GamingModeManager m_gamingModeManager;
     BackgroundOptimizationManager m_backgroundOptimizationManager;
+    GameProfileManager m_gameProfileManager;
+    SettingsManager m_settingsManager;
 
     QHash<DWORD, DWORD> m_modifiedGameProcesses;
 
@@ -47,6 +52,10 @@ private:
     );
 
     void restoreModifiedGamePriorities();
+
+    void loadSettings();
+
+    void saveSettings();
 
     QTimer* gameDetectionTimer = nullptr;
 

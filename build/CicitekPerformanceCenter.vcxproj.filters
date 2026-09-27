@@ -22,6 +22,12 @@
     <ClCompile Include="C:\CicitekPerformanceCenter\src\GamingMode\BackgroundOptimizationManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\CicitekPerformanceCenter\src\GamingMode\GameProfileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\CicitekPerformanceCenter\src\System\SettingsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\CicitekPerformanceCenter\src\CPU\CPU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,6 +70,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\CicitekPerformanceCenter\src\GamingMode\BackgroundOptimizationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\CicitekPerformanceCenter\src\GamingMode\GameProfileManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\CicitekPerformanceCenter\src\System\SettingsManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
