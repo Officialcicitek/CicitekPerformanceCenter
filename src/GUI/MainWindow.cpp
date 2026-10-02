@@ -18,8 +18,16 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
 {
     setWindowTitle("Cicitek Performance Center");
-    resize(1360, 820);
-    setMinimumSize(1100, 700);
+
+    resize(
+        1360,
+        820
+    );
+
+    setMinimumSize(
+        1100,
+        700
+    );
 
 
     // =========================================================
@@ -168,7 +176,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     QLabel* brand =
-        new QLabel("CICITEK");
+        new QLabel(
+            "CICITEK"
+        );
 
     brand->setObjectName(
         "brand"
@@ -288,6 +298,11 @@ MainWindow::MainWindow(QWidget* parent)
     );
 
 
+    processesButton->setEnabled(
+        false
+    );
+
+
     QList<QPushButton*> navButtons =
     {
         dashboardButton,
@@ -372,7 +387,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     QLabel* statusDot =
-        new QLabel("●");
+        new QLabel(
+            "●"
+        );
 
     statusDot->setObjectName(
         "statusDot"
@@ -575,7 +592,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     QLabel* liveDot =
-        new QLabel("●");
+        new QLabel(
+            "●"
+        );
 
     liveDot->setObjectName(
         "liveDot"
@@ -583,7 +602,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 
     QLabel* liveText =
-        new QLabel("LIVE");
+        new QLabel(
+            "LIVE"
+        );
 
     liveText->setObjectName(
         "liveText"
@@ -614,7 +635,9 @@ MainWindow::MainWindow(QWidget* parent)
     // =========================================================
 
     QPushButton* themeButton =
-        new QPushButton("☾");
+        new QPushButton(
+            "☾"
+        );
 
     themeButton->setObjectName(
         "themeButton"
@@ -677,17 +700,24 @@ MainWindow::MainWindow(QWidget* parent)
     );
 
 
+    // =========================================================
+    // DASHBOARD
+    // =========================================================
+
     Dashboard* dashboard =
         new Dashboard();
-
-
-    GamingMode* gamingMode =
-        new GamingMode();
-
 
     pageStack->addWidget(
         dashboard
     );
+
+
+    // =========================================================
+    // GAMING MODE
+    // =========================================================
+
+    GamingMode* gamingMode =
+        new GamingMode();
 
     pageStack->addWidget(
         gamingMode
@@ -696,120 +726,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     contentLayout->addWidget(
         pageStack
-    );
-
-
-    // =========================================================
-    // NAVIGATION
-    // =========================================================
-
-    connect(
-        dashboardButton,
-        &QPushButton::clicked,
-        this,
-        [
-            pageStack,
-            dashboardButton,
-            gamingButton,
-            title,
-            subtitle,
-            dashboard
-        ]()
-        {
-            pageStack->setCurrentWidget(
-                dashboard
-            );
-
-            title->setText(
-                "Dashboard"
-            );
-
-            subtitle->setText(
-                "System performance at a glance"
-            );
-
-
-            dashboardButton->setObjectName(
-                "navActive"
-            );
-
-            gamingButton->setObjectName(
-                "navButton"
-            );
-
-
-            dashboardButton->style()->unpolish(
-                dashboardButton
-            );
-
-            dashboardButton->style()->polish(
-                dashboardButton
-            );
-
-
-            gamingButton->style()->unpolish(
-                gamingButton
-            );
-
-            gamingButton->style()->polish(
-                gamingButton
-            );
-        }
-    );
-
-
-    connect(
-        gamingButton,
-        &QPushButton::clicked,
-        this,
-        [
-            pageStack,
-            dashboardButton,
-            gamingButton,
-            title,
-            subtitle,
-            gamingMode
-        ]()
-        {
-            pageStack->setCurrentWidget(
-                gamingMode
-            );
-
-            title->setText(
-                "Gaming Mode"
-            );
-
-            subtitle->setText(
-                "Optimize your system for gaming"
-            );
-
-
-            dashboardButton->setObjectName(
-                "navButton"
-            );
-
-            gamingButton->setObjectName(
-                "navActive"
-            );
-
-
-            dashboardButton->style()->unpolish(
-                dashboardButton
-            );
-
-            dashboardButton->style()->polish(
-                dashboardButton
-            );
-
-
-            gamingButton->style()->unpolish(
-                gamingButton
-            );
-
-            gamingButton->style()->polish(
-                gamingButton
-            );
-        }
     );
 
 
@@ -913,6 +829,12 @@ MainWindow::MainWindow(QWidget* parent)
             color: #ffffff;
             border: 1px solid #283652;
             border-left: 3px solid #6888ff;
+        }
+
+        #navButton:disabled {
+            background: transparent;
+            color: #454d5b;
+            border: 1px solid transparent;
         }
 
         #systemCard {
@@ -1092,6 +1014,12 @@ MainWindow::MainWindow(QWidget* parent)
             border-left: 3px solid #5273e8;
         }
 
+        #navButton:disabled {
+            background: transparent;
+            color: #b8bdc6;
+            border: 1px solid transparent;
+        }
+
         #systemCard {
             background: #f7f8fa;
             border: 1px solid #dfe3e9;
@@ -1191,12 +1119,106 @@ MainWindow::MainWindow(QWidget* parent)
         darkTheme
     );
 
-    dashboard->setLightMode(
-        false
+
+    // =========================================================
+    // NAVIGATION
+    // =========================================================
+
+    connect(
+        dashboardButton,
+        &QPushButton::clicked,
+        this,
+        [
+            pageStack,
+            dashboardButton,
+            gamingButton,
+            title,
+            subtitle
+        ]()
+        {
+            pageStack->setCurrentIndex(0);
+
+            dashboardButton->setObjectName(
+                "navActive"
+            );
+
+            gamingButton->setObjectName(
+                "navButton"
+            );
+
+            title->setText(
+                "Dashboard"
+            );
+
+            subtitle->setText(
+                "System performance at a glance"
+            );
+
+            dashboardButton->style()->unpolish(
+                dashboardButton
+            );
+
+            dashboardButton->style()->polish(
+                dashboardButton
+            );
+
+            gamingButton->style()->unpolish(
+                gamingButton
+            );
+
+            gamingButton->style()->polish(
+                gamingButton
+            );
+        }
     );
 
-    gamingMode->setLightMode(
-        false
+
+    connect(
+        gamingButton,
+        &QPushButton::clicked,
+        this,
+        [
+            pageStack,
+            dashboardButton,
+            gamingButton,
+            title,
+            subtitle
+        ]()
+        {
+            pageStack->setCurrentIndex(1);
+
+            dashboardButton->setObjectName(
+                "navButton"
+            );
+
+            gamingButton->setObjectName(
+                "navActive"
+            );
+
+            title->setText(
+                "Gaming Mode"
+            );
+
+            subtitle->setText(
+                "Optimize Windows for gaming"
+            );
+
+            dashboardButton->style()->unpolish(
+                dashboardButton
+            );
+
+            dashboardButton->style()->polish(
+                dashboardButton
+            );
+
+            gamingButton->style()->unpolish(
+                gamingButton
+            );
+
+            gamingButton->style()->polish(
+                gamingButton
+            );
+        }
     );
 
 
@@ -1211,8 +1233,6 @@ MainWindow::MainWindow(QWidget* parent)
         [
             this,
             themeButton,
-            dashboard,
-            gamingMode,
             darkTheme,
             lightTheme
         ](bool lightMode)
@@ -1226,14 +1246,6 @@ MainWindow::MainWindow(QWidget* parent)
                 setStyleSheet(
                     lightTheme
                 );
-
-                dashboard->setLightMode(
-                    true
-                );
-
-                gamingMode->setLightMode(
-                    true
-                );
             }
             else
             {
@@ -1243,14 +1255,6 @@ MainWindow::MainWindow(QWidget* parent)
 
                 setStyleSheet(
                     darkTheme
-                );
-
-                dashboard->setLightMode(
-                    false
-                );
-
-                gamingMode->setLightMode(
-                    false
                 );
             }
         }

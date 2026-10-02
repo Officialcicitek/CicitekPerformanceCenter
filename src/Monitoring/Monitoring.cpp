@@ -7,15 +7,16 @@
 #include "../System/System.h"
 #include "../Temperature/Temperature.h"
 
+#include <QDebug>
+#include <QElapsedTimer>
+
 
 namespace Monitoring
 {
     void Initialize()
     {
         CPU::Initialize();
-
         Disk::Initialize();
-
         Network::Initialize();
     }
 
@@ -23,6 +24,9 @@ namespace Monitoring
     SystemStats Update()
     {
         SystemStats stats;
+
+        QElapsedTimer timer;
+        timer.start();
 
 
         // =========================
@@ -32,8 +36,19 @@ namespace Monitoring
         stats.cpuUsage =
             CPU::GetUsage();
 
+        qDebug()
+            << "[Monitoring] CPU usage:"
+            << timer.elapsed()
+            << "ms";
+
+
         stats.cpuTemperature =
             Temperature::GetCPUTemperature();
+
+        qDebug()
+            << "[Monitoring] CPU temperature:"
+            << timer.elapsed()
+            << "ms";
 
 
         // =========================
@@ -43,17 +58,46 @@ namespace Monitoring
         stats.gpuUsage =
             Temperature::GetGPUUsage();
 
+        qDebug()
+            << "[Monitoring] GPU usage:"
+            << timer.elapsed()
+            << "ms";
+
+
         stats.gpuTemperature =
             Temperature::GetGPUTemperature();
+
+        qDebug()
+            << "[Monitoring] GPU temperature:"
+            << timer.elapsed()
+            << "ms";
+
 
         stats.gpuHotspot =
             Temperature::GetGPUHotspot();
 
+        qDebug()
+            << "[Monitoring] GPU hotspot:"
+            << timer.elapsed()
+            << "ms";
+
+
         stats.gpuVramUsedGB =
             Temperature::GetGPUVRAMUsed();
 
+        qDebug()
+            << "[Monitoring] GPU VRAM used:"
+            << timer.elapsed()
+            << "ms";
+
+
         stats.gpuVramTotalGB =
             Temperature::GetGPUVRAMTotal();
+
+        qDebug()
+            << "[Monitoring] GPU VRAM total:"
+            << timer.elapsed()
+            << "ms";
 
 
         // =========================
@@ -69,6 +113,11 @@ namespace Monitoring
         stats.ramUsagePercent =
             RAM::GetUsagePercent();
 
+        qDebug()
+            << "[Monitoring] RAM:"
+            << timer.elapsed()
+            << "ms";
+
 
         // =========================
         // DISK
@@ -82,6 +131,11 @@ namespace Monitoring
 
         stats.diskWriteMBps =
             disk.writeMBps;
+
+        qDebug()
+            << "[Monitoring] Disk:"
+            << timer.elapsed()
+            << "ms";
 
 
         // =========================
@@ -97,6 +151,11 @@ namespace Monitoring
         stats.networkUploadMBps =
             network.uploadMBps;
 
+        qDebug()
+            << "[Monitoring] Network:"
+            << timer.elapsed()
+            << "ms";
+
 
         // =========================
         // SYSTEM
@@ -104,6 +163,17 @@ namespace Monitoring
 
         stats.uptimeSeconds =
             System::GetUptimeSeconds();
+
+        qDebug()
+            << "[Monitoring] System:"
+            << timer.elapsed()
+            << "ms";
+
+
+        qDebug()
+            << "[Monitoring] TOTAL:"
+            << timer.elapsed()
+            << "ms";
 
 
         return stats;

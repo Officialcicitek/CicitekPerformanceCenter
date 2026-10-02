@@ -28,6 +28,9 @@ add_executable(CicitekPerformanceCenter
     src/GUI/GamingMode/GamingMode.cpp
     src/GUI/GamingMode/GamingMode.h
 
+    src/GUI/Processes/Processes.cpp
+    src/GUI/Processes/Processes.h
+
     src/GamingMode/GamingModeManager.cpp
     src/GamingMode/GamingModeManager.h
     src/GamingMode/BackgroundOptimizationManager.cpp
@@ -46,9 +49,13 @@ add_executable(CicitekPerformanceCenter
     src/Network/Network.cpp
     src/Monitoring/Monitoring.cpp
     src/Temperature/Temperature.cpp
+
+    src/Processes/Processes.cpp
+    src/Processes/Processes.h
 )
 
 target_link_libraries(CicitekPerformanceCenter
     PRIVATE
     Qt6::Widgets
+    Psapi
 )
