@@ -264,19 +264,6 @@ The v0.4.0 update introduces the first complete **Processes** system, including:
 
 The release also includes the existing Gaming Mode system and hardware monitoring functionality.
 
-### v0.3.0 — Gaming Mode
-
-The v0.3.0 update introduced the first complete Gaming Mode system, including:
-
-- Automatic game detection
-- Windows power plan management
-- CPU process priority management
-- Background process optimization
-- Game profiles
-- Persistent Gaming Mode settings
-- Gaming Mode UI
-- Dark/light theme support
-
 ### Next
 
 The next development phase is focused on the **Tweaks** system.
