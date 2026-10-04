@@ -14,6 +14,10 @@
 #include <windows.h>
 #include <tlhelp32.h>
 
+// =============================================================
+// CONSTRUCTOR
+// =============================================================
+
 GamingMode::GamingMode(QWidget* parent)
     : QWidget(parent)
 {
@@ -726,19 +730,41 @@ GamingMode::GamingMode(QWidget* parent)
                 m_highCpuPriorityEnabled
             )
             {
-                cpuPriorityStatusLabel->setText(
-                    "Ready to boost supported detected game"
-                );
+                if (
+                    m_gamingModeManager.isEnabled()
+                )
+                {
+                    cpuPriorityStatusLabel->setText(
+                        "Ready to boost supported detected game"
+                    );
 
-                detectRunningGame();
+                    detectRunningGame();
+                }
+                else
+                {
+                    cpuPriorityStatusLabel->setText(
+                        "Gaming Mode is OFF"
+                    );
+                }
             }
             else
             {
                 restoreModifiedGamePriorities();
 
-                cpuPriorityStatusLabel->setText(
-                    "Boost game process priority"
-                );
+                if (
+                    m_gamingModeManager.isEnabled()
+                )
+                {
+                    cpuPriorityStatusLabel->setText(
+                        "Ready to boost supported detected game"
+                    );
+                }
+                else
+                {
+                    cpuPriorityStatusLabel->setText(
+                        "Gaming Mode is OFF"
+                    );
+                }
             }
         }
     );
@@ -1100,12 +1126,17 @@ void GamingMode::detectRunningGame()
 
     // =========================================================
     // HIGH CPU PRIORITY
+    //
+    // IMPORTANT:
+    // Priority changes are allowed ONLY while Gaming Mode
+    // is actually enabled.
     // =========================================================
 
     QStringList cpuPriorityStatus;
 
     if (
-        m_highCpuPriorityEnabled
+        m_highCpuPriorityEnabled &&
+        m_gamingModeManager.isEnabled()
     )
     {
         for (
@@ -1287,6 +1318,14 @@ void GamingMode::detectRunningGame()
     else
     {
         if (
+            !m_gamingModeManager.isEnabled()
+        )
+        {
+            cpuPriorityStatusLabel->setText(
+                "Gaming Mode is OFF"
+            );
+        }
+        else if (
             gameDetected
         )
         {

@@ -2,6 +2,7 @@
 
 #include "Dashboard/Dashboard.h"
 #include "GamingMode/GamingMode.h"
+#include "Processes/Processes.h"
 
 #include <QFrame>
 #include <QStyle>
@@ -12,7 +13,6 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget* parent)
         700
     );
 
-
     // =========================================================
     // CENTRAL WIDGET
     // =========================================================
@@ -45,7 +44,6 @@ MainWindow::MainWindow(QWidget* parent)
         central
     );
 
-
     QHBoxLayout* mainLayout =
         new QHBoxLayout(central);
 
@@ -59,7 +57,6 @@ MainWindow::MainWindow(QWidget* parent)
     mainLayout->setSpacing(
         0
     );
-
 
     // =========================================================
     // SIDEBAR
@@ -76,7 +73,6 @@ MainWindow::MainWindow(QWidget* parent)
         250
     );
 
-
     QVBoxLayout* sidebarLayout =
         new QVBoxLayout(sidebar);
 
@@ -90,7 +86,6 @@ MainWindow::MainWindow(QWidget* parent)
     sidebarLayout->setSpacing(
         6
     );
-
 
     // =========================================================
     // BRAND
@@ -106,7 +101,6 @@ MainWindow::MainWindow(QWidget* parent)
     brandContainer->setFixedHeight(
         62
     );
-
 
     QHBoxLayout* brandLayout =
         new QHBoxLayout(
@@ -124,7 +118,6 @@ MainWindow::MainWindow(QWidget* parent)
         11
     );
 
-
     QFrame* brandMark =
         new QFrame();
 
@@ -137,14 +130,12 @@ MainWindow::MainWindow(QWidget* parent)
         34
     );
 
-
     QLabel* brandMarkText =
         new QLabel("C");
 
     brandMarkText->setObjectName(
         "brandMarkText"
     );
-
 
     QVBoxLayout* markLayout =
         new QVBoxLayout(
@@ -166,14 +157,12 @@ MainWindow::MainWindow(QWidget* parent)
         brandMarkText
     );
 
-
     QVBoxLayout* brandTextLayout =
         new QVBoxLayout();
 
     brandTextLayout->setSpacing(
         0
     );
-
 
     QLabel* brand =
         new QLabel(
@@ -184,7 +173,6 @@ MainWindow::MainWindow(QWidget* parent)
         "brand"
     );
 
-
     QLabel* brandSub =
         new QLabel(
             "PERFORMANCE CENTER"
@@ -194,7 +182,6 @@ MainWindow::MainWindow(QWidget* parent)
         "brandSub"
     );
 
-
     brandTextLayout->addWidget(
         brand
     );
@@ -202,7 +189,6 @@ MainWindow::MainWindow(QWidget* parent)
     brandTextLayout->addWidget(
         brandSub
     );
-
 
     brandLayout->addWidget(
         brandMark
@@ -214,11 +200,9 @@ MainWindow::MainWindow(QWidget* parent)
 
     brandLayout->addStretch();
 
-
     sidebarLayout->addWidget(
         brandContainer
     );
-
 
     // =========================================================
     // NAVIGATION LABEL
@@ -233,7 +217,6 @@ MainWindow::MainWindow(QWidget* parent)
         "navigationLabel"
     );
 
-
     sidebarLayout->addSpacing(
         17
     );
@@ -245,7 +228,6 @@ MainWindow::MainWindow(QWidget* parent)
     sidebarLayout->addSpacing(
         7
     );
-
 
     // =========================================================
     // NAVIGATION BUTTONS
@@ -276,7 +258,6 @@ MainWindow::MainWindow(QWidget* parent)
             "Logs"
         );
 
-
     dashboardButton->setObjectName(
         "navActive"
     );
@@ -297,12 +278,6 @@ MainWindow::MainWindow(QWidget* parent)
         "navButton"
     );
 
-
-    processesButton->setEnabled(
-        false
-    );
-
-
     QList<QPushButton*> navButtons =
     {
         dashboardButton,
@@ -311,7 +286,6 @@ MainWindow::MainWindow(QWidget* parent)
         tweaksButton,
         logsButton
     };
-
 
     for (QPushButton* button : navButtons)
     {
@@ -324,13 +298,11 @@ MainWindow::MainWindow(QWidget* parent)
         );
     }
 
-
     // =========================================================
     // SIDEBAR SPACER
     // =========================================================
 
     sidebarLayout->addStretch();
-
 
     // =========================================================
     // SIDEBAR SYSTEM CARD
@@ -342,7 +314,6 @@ MainWindow::MainWindow(QWidget* parent)
     systemCard->setObjectName(
         "systemCard"
     );
-
 
     QVBoxLayout* systemLayout =
         new QVBoxLayout(
@@ -360,7 +331,6 @@ MainWindow::MainWindow(QWidget* parent)
         7
     );
 
-
     QLabel* systemLabel =
         new QLabel(
             "SYSTEM"
@@ -369,7 +339,6 @@ MainWindow::MainWindow(QWidget* parent)
     systemLabel->setObjectName(
         "systemLabel"
     );
-
 
     QHBoxLayout* systemStatusLayout =
         new QHBoxLayout();
@@ -385,7 +354,6 @@ MainWindow::MainWindow(QWidget* parent)
         7
     );
 
-
     QLabel* statusDot =
         new QLabel(
             "●"
@@ -395,7 +363,6 @@ MainWindow::MainWindow(QWidget* parent)
         "statusDot"
     );
 
-
     QLabel* statusText =
         new QLabel(
             "Monitoring active"
@@ -404,7 +371,6 @@ MainWindow::MainWindow(QWidget* parent)
     statusText->setObjectName(
         "statusText"
     );
-
 
     systemStatusLayout->addWidget(
         statusDot
@@ -416,7 +382,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     systemStatusLayout->addStretch();
 
-
     QLabel* version =
         new QLabel(
             "CPC  •  v0.1.0"
@@ -425,7 +390,6 @@ MainWindow::MainWindow(QWidget* parent)
     version->setObjectName(
         "version"
     );
-
 
     systemLayout->addWidget(
         systemLabel
@@ -439,11 +403,9 @@ MainWindow::MainWindow(QWidget* parent)
         version
     );
 
-
     sidebarLayout->addWidget(
         systemCard
     );
-
 
     // =========================================================
     // MAIN CONTENT
@@ -455,7 +417,6 @@ MainWindow::MainWindow(QWidget* parent)
     content->setObjectName(
         "content"
     );
-
 
     QVBoxLayout* contentLayout =
         new QVBoxLayout(
@@ -473,7 +434,6 @@ MainWindow::MainWindow(QWidget* parent)
         22
     );
 
-
     // =========================================================
     // TOP HEADER
     // =========================================================
@@ -489,7 +449,6 @@ MainWindow::MainWindow(QWidget* parent)
         72
     );
 
-
     QHBoxLayout* headerLayout =
         new QHBoxLayout(
             header
@@ -501,7 +460,6 @@ MainWindow::MainWindow(QWidget* parent)
         12,
         0
     );
-
 
     // =========================================================
     // HEADER TITLE
@@ -521,7 +479,6 @@ MainWindow::MainWindow(QWidget* parent)
         2
     );
 
-
     QLabel* title =
         new QLabel(
             "Dashboard"
@@ -530,7 +487,6 @@ MainWindow::MainWindow(QWidget* parent)
     title->setObjectName(
         "headerTitle"
     );
-
 
     QLabel* subtitle =
         new QLabel(
@@ -541,7 +497,6 @@ MainWindow::MainWindow(QWidget* parent)
         "headerSubtitle"
     );
 
-
     titleLayout->addWidget(
         title
     );
@@ -550,13 +505,11 @@ MainWindow::MainWindow(QWidget* parent)
         subtitle
     );
 
-
     headerLayout->addLayout(
         titleLayout
     );
 
     headerLayout->addStretch();
-
 
     // =========================================================
     // LIVE INDICATOR
@@ -572,7 +525,6 @@ MainWindow::MainWindow(QWidget* parent)
     liveContainer->setFixedHeight(
         38
     );
-
 
     QHBoxLayout* liveLayout =
         new QHBoxLayout(
@@ -590,7 +542,6 @@ MainWindow::MainWindow(QWidget* parent)
         7
     );
 
-
     QLabel* liveDot =
         new QLabel(
             "●"
@@ -599,7 +550,6 @@ MainWindow::MainWindow(QWidget* parent)
     liveDot->setObjectName(
         "liveDot"
     );
-
 
     QLabel* liveText =
         new QLabel(
@@ -610,7 +560,6 @@ MainWindow::MainWindow(QWidget* parent)
         "liveText"
     );
 
-
     liveLayout->addWidget(
         liveDot
     );
@@ -619,16 +568,13 @@ MainWindow::MainWindow(QWidget* parent)
         liveText
     );
 
-
     headerLayout->addWidget(
         liveContainer
     );
 
-
     headerLayout->addSpacing(
         8
     );
-
 
     // =========================================================
     // THEME
@@ -656,16 +602,13 @@ MainWindow::MainWindow(QWidget* parent)
         "Toggle theme"
     );
 
-
     headerLayout->addWidget(
         themeButton
     );
 
-
     contentLayout->addWidget(
         header
     );
-
 
     // =========================================================
     // ACCENT LINE
@@ -682,11 +625,9 @@ MainWindow::MainWindow(QWidget* parent)
         2
     );
 
-
     contentLayout->addWidget(
         accent
     );
-
 
     // =========================================================
     // PAGE STACK
@@ -699,7 +640,6 @@ MainWindow::MainWindow(QWidget* parent)
         "pageStack"
     );
 
-
     // =========================================================
     // DASHBOARD
     // =========================================================
@@ -710,7 +650,6 @@ MainWindow::MainWindow(QWidget* parent)
     pageStack->addWidget(
         dashboard
     );
-
 
     // =========================================================
     // GAMING MODE
@@ -723,11 +662,20 @@ MainWindow::MainWindow(QWidget* parent)
         gamingMode
     );
 
+    // =========================================================
+    // PROCESSES
+    // =========================================================
+
+    ProcessesPage* processesPage =
+        new ProcessesPage();
+
+    pageStack->addWidget(
+        processesPage
+    );
 
     contentLayout->addWidget(
         pageStack
     );
-
 
     // =========================================================
     // MAIN LAYOUT
@@ -741,13 +689,11 @@ MainWindow::MainWindow(QWidget* parent)
         content
     );
 
-
     // =========================================================
     // DARK THEME
     // =========================================================
 
     const QString darkTheme = R"(
-
         * {
             font-family: "Segoe UI";
         }
@@ -926,15 +872,142 @@ MainWindow::MainWindow(QWidget* parent)
             background: #5c7cff;
         }
 
-    )";
+        /* =====================================================
+           PROCESS MANAGER - DARK
+           ===================================================== */
 
+        #processesPage {
+            background: transparent;
+        }
+
+        #processManagerTitle {
+            color: #f5f6f8;
+            font-size: 19px;
+            font-weight: 750;
+        }
+
+        #processCount {
+            color: #687386;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        #processSearch {
+            background: #11161e;
+            color: #e9edf3;
+            border: 1px solid #29303c;
+            border-radius: 8px;
+            padding: 0 12px;
+            min-height: 36px;
+            selection-background-color: #5c7cff;
+        }
+
+        #processSearch:focus {
+            border: 1px solid #5c7cff;
+        }
+
+        #processSearch::placeholder {
+            color: #626c7c;
+        }
+
+        #processRefresh {
+            background: #171d27;
+            color: #dce1e9;
+            border: 1px solid #2b3442;
+            border-radius: 8px;
+            min-height: 36px;
+            font-weight: 600;
+        }
+
+        #processRefresh:hover {
+            background: #202734;
+            border: 1px solid #3a4658;
+        }
+
+        #processRefresh:pressed {
+            background: #11151c;
+        }
+
+        #processTable {
+            background: #0f131a;
+            color: #dfe4ec;
+            border: 1px solid #242b36;
+            border-radius: 10px;
+            gridline-color: transparent;
+            outline: none;
+        }
+
+        #processTable QHeaderView::section {
+            background: #151a22;
+            color: #737e90;
+            border: none;
+            border-bottom: 1px solid #282f3b;
+            padding: 0 10px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        #processTable QHeaderView::section:hover {
+            background: #1b212b;
+            color: #aab3c1;
+        }
+
+        #processTable::item {
+            border: none;
+            padding: 0 10px;
+        }
+
+        #processTable::item:selected {
+            background: #1b2740;
+            color: #ffffff;
+        }
+
+        #processTable::item:hover {
+            background: #171e29;
+        }
+
+        #processTable QScrollBar:vertical {
+            background: #0d1117;
+            width: 10px;
+            margin: 2px;
+        }
+
+        #processTable QScrollBar::handle:vertical {
+            background: #303947;
+            border-radius: 5px;
+            min-height: 30px;
+        }
+
+        #processTable QScrollBar::handle:vertical:hover {
+            background: #414d5e;
+        }
+
+        #processTable QScrollBar::add-line:vertical,
+        #processTable QScrollBar::sub-line:vertical {
+            height: 0;
+        }
+
+        #processTable QScrollBar:horizontal {
+            background: #0d1117;
+            height: 10px;
+        }
+
+        #processTable QScrollBar::handle:horizontal {
+            background: #303947;
+            border-radius: 5px;
+        }
+
+        #processTable QScrollBar::add-line:horizontal,
+        #processTable QScrollBar::sub-line:horizontal {
+            width: 0;
+        }
+    )";
 
     // =========================================================
     // LIGHT THEME
     // =========================================================
 
     const QString lightTheme = R"(
-
         * {
             font-family: "Segoe UI";
         }
@@ -951,6 +1024,10 @@ MainWindow::MainWindow(QWidget* parent)
         #sidebar {
             background: #ffffff;
             border-right: 1px solid #dfe3e9;
+        }
+
+        #brandContainer {
+            background: transparent;
         }
 
         #brandMark {
@@ -1108,8 +1185,136 @@ MainWindow::MainWindow(QWidget* parent)
             background: #5273e8;
         }
 
-    )";
+        /* =====================================================
+           PROCESS MANAGER - LIGHT
+           ===================================================== */
 
+        #processesPage {
+            background: transparent;
+        }
+
+        #processManagerTitle {
+            color: #171a20;
+            font-size: 19px;
+            font-weight: 750;
+        }
+
+        #processCount {
+            color: #858d99;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        #processSearch {
+            background: #ffffff;
+            color: #20242b;
+            border: 1px solid #d8dde5;
+            border-radius: 8px;
+            padding: 0 12px;
+            min-height: 36px;
+            selection-background-color: #5273e8;
+        }
+
+        #processSearch:focus {
+            border: 1px solid #5273e8;
+        }
+
+        #processSearch::placeholder {
+            color: #9ba2ad;
+        }
+
+        #processRefresh {
+            background: #ffffff;
+            color: #4d5562;
+            border: 1px solid #d8dde5;
+            border-radius: 8px;
+            min-height: 36px;
+            font-weight: 600;
+        }
+
+        #processRefresh:hover {
+            background: #f0f2f5;
+            border: 1px solid #cbd1da;
+        }
+
+        #processRefresh:pressed {
+            background: #e5e8ed;
+        }
+
+        #processTable {
+            background: #ffffff;
+            color: #252a32;
+            border: 1px solid #dfe3e9;
+            border-radius: 10px;
+            gridline-color: transparent;
+            outline: none;
+        }
+
+        #processTable QHeaderView::section {
+            background: #f5f6f8;
+            color: #777f8c;
+            border: none;
+            border-bottom: 1px solid #dfe3e9;
+            padding: 0 10px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        #processTable QHeaderView::section:hover {
+            background: #eceff3;
+            color: #555d69;
+        }
+
+        #processTable::item {
+            border: none;
+            padding: 0 10px;
+        }
+
+        #processTable::item:selected {
+            background: #e7ecfb;
+            color: #203f8c;
+        }
+
+        #processTable::item:hover {
+            background: #f3f5f8;
+        }
+
+        #processTable QScrollBar:vertical {
+            background: #f1f3f6;
+            width: 10px;
+            margin: 2px;
+        }
+
+        #processTable QScrollBar::handle:vertical {
+            background: #c7ccd5;
+            border-radius: 5px;
+            min-height: 30px;
+        }
+
+        #processTable QScrollBar::handle:vertical:hover {
+            background: #adb4bf;
+        }
+
+        #processTable QScrollBar::add-line:vertical,
+        #processTable QScrollBar::sub-line:vertical {
+            height: 0;
+        }
+
+        #processTable QScrollBar:horizontal {
+            background: #f1f3f6;
+            height: 10px;
+        }
+
+        #processTable QScrollBar::handle:horizontal {
+            background: #c7ccd5;
+            border-radius: 5px;
+        }
+
+        #processTable QScrollBar::add-line:horizontal,
+        #processTable QScrollBar::sub-line:horizontal {
+            width: 0;
+        }
+    )";
 
     // =========================================================
     // APPLY INITIAL THEME
@@ -1119,9 +1324,8 @@ MainWindow::MainWindow(QWidget* parent)
         darkTheme
     );
 
-
     // =========================================================
-    // NAVIGATION
+    // DASHBOARD NAVIGATION
     // =========================================================
 
     connect(
@@ -1132,6 +1336,7 @@ MainWindow::MainWindow(QWidget* parent)
             pageStack,
             dashboardButton,
             gamingButton,
+            processesButton,
             title,
             subtitle
         ]()
@@ -1143,6 +1348,10 @@ MainWindow::MainWindow(QWidget* parent)
             );
 
             gamingButton->setObjectName(
+                "navButton"
+            );
+
+            processesButton->setObjectName(
                 "navButton"
             );
 
@@ -1169,9 +1378,20 @@ MainWindow::MainWindow(QWidget* parent)
             gamingButton->style()->polish(
                 gamingButton
             );
+
+            processesButton->style()->unpolish(
+                processesButton
+            );
+
+            processesButton->style()->polish(
+                processesButton
+            );
         }
     );
 
+    // =========================================================
+    // GAMING MODE NAVIGATION
+    // =========================================================
 
     connect(
         gamingButton,
@@ -1181,6 +1401,7 @@ MainWindow::MainWindow(QWidget* parent)
             pageStack,
             dashboardButton,
             gamingButton,
+            processesButton,
             title,
             subtitle
         ]()
@@ -1193,6 +1414,10 @@ MainWindow::MainWindow(QWidget* parent)
 
             gamingButton->setObjectName(
                 "navActive"
+            );
+
+            processesButton->setObjectName(
+                "navButton"
             );
 
             title->setText(
@@ -1218,9 +1443,81 @@ MainWindow::MainWindow(QWidget* parent)
             gamingButton->style()->polish(
                 gamingButton
             );
+
+            processesButton->style()->unpolish(
+                processesButton
+            );
+
+            processesButton->style()->polish(
+                processesButton
+            );
         }
     );
 
+    // =========================================================
+    // PROCESSES NAVIGATION
+    // =========================================================
+
+    connect(
+        processesButton,
+        &QPushButton::clicked,
+        this,
+        [
+            pageStack,
+            dashboardButton,
+            gamingButton,
+            processesButton,
+            title,
+            subtitle
+        ]()
+        {
+            pageStack->setCurrentIndex(2);
+
+            dashboardButton->setObjectName(
+                "navButton"
+            );
+
+            gamingButton->setObjectName(
+                "navButton"
+            );
+
+            processesButton->setObjectName(
+                "navActive"
+            );
+
+            title->setText(
+                "Processes"
+            );
+
+            subtitle->setText(
+                "Manage and monitor running processes"
+            );
+
+            dashboardButton->style()->unpolish(
+                dashboardButton
+            );
+
+            dashboardButton->style()->polish(
+                dashboardButton
+            );
+
+            gamingButton->style()->unpolish(
+                gamingButton
+            );
+
+            gamingButton->style()->polish(
+                gamingButton
+            );
+
+            processesButton->style()->unpolish(
+                processesButton
+            );
+
+            processesButton->style()->polish(
+                processesButton
+            );
+        }
+    );
 
     // =========================================================
     // THEME TOGGLE
