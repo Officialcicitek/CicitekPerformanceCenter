@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QFutureWatcher>
 
 #include "../../Monitoring/Monitoring.h"
 
@@ -17,6 +18,8 @@ public:
 
 private:
     bool m_lightMode = false;
+
+    QFutureWatcher<Monitoring::SystemStats>* m_statsWatcher = nullptr;
 
     // CPU
     QLabel* cpuUsageLabel = nullptr;
@@ -55,4 +58,5 @@ private:
     QLabel* uptimeLabel = nullptr;
 
     void updateStats();
+    void applyStats(const Monitoring::SystemStats& stats);
 };

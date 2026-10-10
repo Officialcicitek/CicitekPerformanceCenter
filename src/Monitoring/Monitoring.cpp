@@ -1,3 +1,4 @@
+
 #include "Monitoring.h"
 
 #include "../CPU/CPU.h"
@@ -10,7 +11,6 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-
 namespace Monitoring
 {
     void Initialize()
@@ -20,161 +20,82 @@ namespace Monitoring
         Network::Initialize();
     }
 
-
     SystemStats Update()
     {
         SystemStats stats;
 
-        QElapsedTimer timer;
-        timer.start();
+        auto measure = [](const char* name, auto function)
+        {
+            QElapsedTimer timer;
+            timer.start();
 
+            auto result = function();
 
-        // =========================
-        // CPU
-        // =========================
+            qDebug().noquote()
+                << "[Timing]" << name << timer.elapsed() << "ms";
 
-        stats.cpuUsage =
-            CPU::GetUsage();
+            return result;
+        };
 
-        qDebug()
-            << "[Monitoring] CPU usage:"
-            << timer.elapsed()
-            << "ms";
+        stats.cpuUsage = measure("CPU usage", [] {
+            return CPU::GetUsage();
+        });
 
+        stats.cpuTemperature = measure("CPU temperature", [] {
+            return Temperature::GetCPUTemperature();
+        });
 
-        stats.cpuTemperature =
-            Temperature::GetCPUTemperature();
+        stats.gpuUsage = measure("GPU usage", [] {
+            return Temperature::GetGPUUsage();
+        });
 
-        qDebug()
-            << "[Monitoring] CPU temperature:"
-            << timer.elapsed()
-            << "ms";
+        stats.gpuTemperature = measure("GPU temperature", [] {
+            return Temperature::GetGPUTemperature();
+        });
 
+        stats.gpuHotspot = measure("GPU hotspot", [] {
+            return Temperature::GetGPUHotspot();
+        });
 
-        // =========================
-        // GPU
-        // =========================
+        stats.gpuVramUsedGB = measure("GPU VRAM used", [] {
+            return Temperature::GetGPUVRAMUsed();
+        });
 
-        stats.gpuUsage =
-            Temperature::GetGPUUsage();
+        stats.gpuVramTotalGB = measure("GPU VRAM total", [] {
+            return Temperature::GetGPUVRAMTotal();
+        });
 
-        qDebug()
-            << "[Monitoring] GPU usage:"
-            << timer.elapsed()
-            << "ms";
+        stats.ramUsedGB = measure("RAM used", [] {
+            return RAM::GetUsedGB();
+        });
 
+        stats.ramTotalGB = measure("RAM total", [] {
+            return RAM::GetTotalGB();
+        });
 
-        stats.gpuTemperature =
-            Temperature::GetGPUTemperature();
+        stats.ramUsagePercent = measure("RAM usage percent", [] {
+            return RAM::GetUsagePercent();
+        });
 
-        qDebug()
-            << "[Monitoring] GPU temperature:"
-            << timer.elapsed()
-            << "ms";
+        Disk::DiskUsage disk = measure("Disk update", [] {
+            return Disk::Update();
+        });
 
+        stats.diskReadMBps = disk.readMBps;
+        stats.diskWriteMBps = disk.writeMBps;
 
-        stats.gpuHotspot =
-            Temperature::GetGPUHotspot();
+        Network::NetworkUsage network = measure("Network update", [] {
+            return Network::Update();
+        });
 
-        qDebug()
-            << "[Monitoring] GPU hotspot:"
-            << timer.elapsed()
-            << "ms";
+        stats.networkDownloadMBps = network.downloadMBps;
+        stats.networkUploadMBps = network.uploadMBps;
 
+        stats.uptimeSeconds = measure("System uptime", [] {
+            return System::GetUptimeSeconds();
+        });
 
-        stats.gpuVramUsedGB =
-            Temperature::GetGPUVRAMUsed();
-
-        qDebug()
-            << "[Monitoring] GPU VRAM used:"
-            << timer.elapsed()
-            << "ms";
-
-
-        stats.gpuVramTotalGB =
-            Temperature::GetGPUVRAMTotal();
-
-        qDebug()
-            << "[Monitoring] GPU VRAM total:"
-            << timer.elapsed()
-            << "ms";
-
-
-        // =========================
-        // RAM
-        // =========================
-
-        stats.ramUsedGB =
-            RAM::GetUsedGB();
-
-        stats.ramTotalGB =
-            RAM::GetTotalGB();
-
-        stats.ramUsagePercent =
-            RAM::GetUsagePercent();
-
-        qDebug()
-            << "[Monitoring] RAM:"
-            << timer.elapsed()
-            << "ms";
-
-
-        // =========================
-        // DISK
-        // =========================
-
-        Disk::DiskUsage disk =
-            Disk::Update();
-
-        stats.diskReadMBps =
-            disk.readMBps;
-
-        stats.diskWriteMBps =
-            disk.writeMBps;
-
-        qDebug()
-            << "[Monitoring] Disk:"
-            << timer.elapsed()
-            << "ms";
-
-
-        // =========================
-        // NETWORK
-        // =========================
-
-        Network::NetworkUsage network =
-            Network::Update();
-
-        stats.networkDownloadMBps =
-            network.downloadMBps;
-
-        stats.networkUploadMBps =
-            network.uploadMBps;
-
-        qDebug()
-            << "[Monitoring] Network:"
-            << timer.elapsed()
-            << "ms";
-
-
-        // =========================
-        // SYSTEM
-        // =========================
-
-        stats.uptimeSeconds =
-            System::GetUptimeSeconds();
-
-        qDebug()
-            << "[Monitoring] System:"
-            << timer.elapsed()
-            << "ms";
-
-
-        qDebug()
-            << "[Monitoring] TOTAL:"
-            << timer.elapsed()
-            << "ms";
-
+        qDebug() << "[Timing] Monitoring finished";
 
         return stats;
     }
